@@ -104,6 +104,94 @@ namespace Graphics
             chartCombined.MouseWheel += chData_MouseWheel;
 
 
+            chartHarm.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartHarm.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartHarm.ChartAreas[0].AxisX.Crossing = 0;
+            chartHarm.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartHarm.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartHarm.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartHarm.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartHarm.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartHarm.ChartAreas[0].CursorX.AutoScroll = true;
+            chartHarm.ChartAreas[0].CursorY.AutoScroll = true;
+            chartHarm.MouseWheel += chData_MouseWheel;
+
+
+
+            chartPolyHarm.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartPolyHarm.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartPolyHarm.ChartAreas[0].AxisX.Crossing = 0;
+            chartPolyHarm.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartPolyHarm.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartPolyHarm.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartPolyHarm.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartPolyHarm.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartPolyHarm.ChartAreas[0].CursorX.AutoScroll = true;
+            chartPolyHarm.ChartAreas[0].CursorY.AutoScroll = true;
+            chartPolyHarm.MouseWheel += chData_MouseWheel;
+
+
+            chartSpikes.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartSpikes.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartSpikes.ChartAreas[0].AxisX.Crossing = 0;
+            chartSpikes.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartSpikes.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartSpikes.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartSpikes.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartSpikes.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartSpikes.ChartAreas[0].CursorX.AutoScroll = true;
+            chartSpikes.ChartAreas[0].CursorY.AutoScroll = true;
+            chartSpikes.MouseWheel += chData_MouseWheel;
+
+
+            chartFurie.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartFurie.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartFurie.ChartAreas[0].AxisX.Crossing = 0;
+            chartFurie.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartFurie.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartFurie.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartFurie.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartFurie.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartFurie.ChartAreas[0].CursorX.AutoScroll = true;
+            chartFurie.ChartAreas[0].CursorY.AutoScroll = true;
+            chartFurie.MouseWheel += chData_MouseWheel;
+
+
+
+            chartHeartBeat.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartHeartBeat.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartHeartBeat.ChartAreas[0].AxisX.Crossing = 0;
+            chartHeartBeat.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartHeartBeat.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartHeartBeat.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartHeartBeat.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartHeartBeat.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartHeartBeat.ChartAreas[0].CursorX.AutoScroll = true;
+            chartHeartBeat.ChartAreas[0].CursorY.AutoScroll = true;
+            chartHeartBeat.MouseWheel += chData_MouseWheel;
+
+
+
+            chartTrendFurie.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
+            chartTrendFurie.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
+            chartTrendFurie.ChartAreas[0].AxisX.Crossing = 0;
+            chartTrendFurie.ChartAreas[0].AxisY.Crossing = 0;
+
+            chartTrendFurie.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+            chartTrendFurie.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            chartTrendFurie.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chartTrendFurie.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            chartTrendFurie.ChartAreas[0].CursorX.AutoScroll = true;
+            chartTrendFurie.ChartAreas[0].CursorY.AutoScroll = true;
+            chartTrendFurie.MouseWheel += chData_MouseWheel;
+
+
+
 
 
 
@@ -115,70 +203,11 @@ namespace Graphics
         }
 
 
-        private double Fun1(double x, double a , double b) {
-             return (a * x + b);
-           // return 5;
-        }
 
-
-        private double Fun2(double x, double a, double b, double c)
-        {
-            return (a * Math.Pow(x,2) + b * x + c);
-        }
-        private double Fun3(double x, double a, double b)
-        {
-            return b* Math.Exp(-a*x);
-        }
-
-        private double Fun4(double x, double a, double b)
-        {
-            return b * Math.Log(a*x);
-        }
-        /// <summary>
-        ///  Случайная функция
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        private double Fun6(double x) {
-         
-            double d =  customGenerator.GenerateDouble();
-           // d = 0.5 - rnd.NextDouble();
-        
-            return d;
-        }
-
-        private double Fun5(double x)
-        {
-
-            double d;
-             d = 0.5 - rnd.NextDouble();
-
-            return d;
-        }
-
-
-
-        private double Fun7Combined(double x) {
-            if (x < 0)
-            {
-                return (2 * x);
-            }
-            else if (x <= 1)
-            {
-                return (Math.Pow(x, 2));
-            }
-            else {
-                return Math.Log(x) + 1;
-            }
-
-            
-
-        }
         private void Draw1(double[] x, Chart chart) {
             double a = Double.Parse(tbA.Text);
             double b = Double.Parse(tbB.Text);
             chart.Series.Clear();
-
 
             Series series = chart.Series.Add(FUNCTION_NAME);
        
@@ -188,13 +217,10 @@ namespace Graphics
           
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun1(x[i], a, b)) && !Double.IsNaN(Fun1(x[i], a, b)))
-                series.Points.AddXY(x[i], Fun1(x[i], a, b));
+                if (!Double.IsInfinity(Functions.LinearFunction(x[i], a, b)) && !Double.IsNaN(Functions.LinearFunction(x[i], a, b)))
+                series.Points.AddXY(x[i], Functions.LinearFunction(x[i], a, b));
                 
             }
-
-     
-
         }
 
 
@@ -206,11 +232,10 @@ namespace Graphics
             chart.Series.Clear();
             Series series = chart.Series.Add(FUNCTION_NAME);
             series.ChartType = SeriesChartType.Spline;
-
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun2(x[i], a, b,c)) && !Double.IsNaN(Fun2(x[i], a, b,c)))
-                    series.Points.AddXY(x[i], Fun2(x[i], a, b,c));
+                if (!Double.IsInfinity(Functions.Quadratic(x[i], a, b,c)) && !Double.IsNaN(Functions.Quadratic(x[i], a, b,c)))
+                    series.Points.AddXY(x[i], Functions.Quadratic(x[i], a, b,c));
             }
         }
         private void Draw3(double[] x, Chart chart)
@@ -224,8 +249,8 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun3(x[i], a, b)) && !Double.IsNaN(Fun3(x[i], a, b)))
-                    series.Points.AddXY(x[i], Fun3(x[i], a, b));
+                if (!Double.IsInfinity(Functions.ExpFunction(x[i], a, b)) && !Double.IsNaN(Functions.ExpFunction(x[i], a, b)))
+                    series.Points.AddXY(x[i], Functions.ExpFunction(x[i], a, b));
             }
         }
         private void Draw4(double[] x, Chart chart)
@@ -239,8 +264,8 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun4(x[i], a, b)) && !Double.IsNaN(Fun4(x[i], a, b)))
-                    series.Points.AddXY(x[i], Fun4(x[i], a, b));
+                if (!Double.IsInfinity(Functions.LogFunction(x[i], a, b)) && !Double.IsNaN(Functions.LogFunction(x[i], a, b)))
+                    series.Points.AddXY(x[i], Functions.LogFunction(x[i], a, b));
             }
         }
 
@@ -256,8 +281,8 @@ namespace Graphics
    
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun5(x[i])) && !Double.IsNaN(Fun5(x[i])))
-                    series.Points.AddXY(x[i], Fun5(x[i]));
+                if (!Double.IsInfinity(Functions.RandomFunction(x[i])) && !Double.IsNaN(Functions.RandomFunction(x[i])))
+                    series.Points.AddXY(x[i], Functions.RandomFunction(x[i]));
          
             }
         }
@@ -270,11 +295,12 @@ namespace Graphics
             chart.Series.Clear();
             Series series = chart.Series.Add(FUNCTION_NAME);
             series.ChartType = SeriesChartType.Spline;
-
+            double funValue = 0;
             for (int i = 0; i < x.Length; i++)
             {
-                series.Points.AddXY(x[i], fun(x[i]));
-
+                funValue = fun(x[i]);
+                if (!Double.IsInfinity(funValue) && !Double.IsNaN(funValue))
+                    series.Points.AddXY(x[i], funValue);
             }
         }
 
@@ -292,8 +318,8 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun6(x[i])) && !Double.IsNaN(Fun6(x[i])))
-                    series.Points.AddXY(x[i], Fun6(x[i]));
+                if (!Double.IsInfinity(Functions.CustomRandomFunction(x[i])) && !Double.IsNaN(Functions.CustomRandomFunction(x[i])))
+                    series.Points.AddXY(x[i], Functions.CustomRandomFunction(x[i]));
 
             }
         }
@@ -312,28 +338,258 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Double.IsInfinity(Fun7Combined(x[i])) && !Double.IsNaN(Fun7Combined(x[i])))
-                    series.Points.AddXY(x[i], Fun7Combined(x[i]));
+                if (!Double.IsInfinity(Functions.CombinedFunction(x[i])) && !Double.IsNaN(Functions.CombinedFunction(x[i])))
+                    series.Points.AddXY(x[i], Functions.CombinedFunction(x[i]));
 
             }
         }
 
+        private void DrawHarm(double[] x, Chart chart)
+        {
+            double a = Double.Parse(tbA7.Text);
+            double b = Double.Parse(tbB7.Text);
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Spline;
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!Double.IsInfinity(Functions.HarmonicFunction(x[i],a,b)) && !Double.IsNaN(Functions.HarmonicFunction(x[i],a,b)))
+                    series.Points.AddXY(x[i], Functions.HarmonicFunction(x[i], a, b));
+            }
+
+        }
+
+        private void DrawHeartBeat(double xDelta, int xCount, double hDelta, int hCount, Chart chart)
+        {
+            double f0 = Double.Parse(tbA12.Text);
+            double alpha = Double.Parse(tbB12.Text);
+            double spikes = Double.Parse(tbSpikes12.Text);
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Spline;
+
+
+            double[] h = new double[hCount];
+            double[] x = new double[xCount];
+            Func<double, double> hFun = (t => Math.Sin(2 * Math.PI * f0 *t ) * Math.Exp(-alpha * t));
+            double dt = hDelta;
+            for (int i = 0; i < h.Length; i++)
+            {
+                h[i] = hFun(i * dt);
+            }   
+
+            for (int i = (int)(x.Length / spikes); i < x.Length; i = i+(int)(x.Length/spikes)) {
+                x[i] = 110 + rnd.Next(0, 20);
+            }
+            double[] res = Transformations.ConvolutionFunction(h, x);
+
+            for (int i = 0; i < res.Length; i++)
+            {
+                if (!Double.IsInfinity(res[i]) && !Double.IsNaN(res[i]))
+                    series.Points.AddXY(i, res[i]+1);
+            }
+
+
+
+        }
+
+
+
+        private void DrawPolyHarmonic(double[] x, Chart chart)
+        {
+            double[] a = new double[3];
+            double[] b = new double[3];
+
+             a[0] = Double.Parse(tbA8_0.Text);
+             b[0] = Double.Parse(tbB8_0.Text);
+             a[1] = Double.Parse(tbA8_1.Text);
+             b[1] = Double.Parse(tbB8_1.Text);
+             a[2] = Double.Parse(tbA8_2.Text);
+             b[2] = Double.Parse(tbB8_2.Text);
+
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Spline;
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!Double.IsInfinity(Functions.PolyHarmonicFunction(x[i], a, b)) && !Double.IsNaN(Functions.PolyHarmonicFunction(x[i], a, b)))
+                    series.Points.AddXY(x[i], Functions.PolyHarmonicFunction(x[i], a, b));
+            }
+        }
+
+        private void DrawSpikes(double[] x, Chart chart)
+        {
+            double m = Double.Parse(tbM9.Text);
+            double sigma = Double.Parse(tbSigma9.Text);
+            double[] y = new double[x.Length];
+
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Line;
+            for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = Functions.HarmonicFunction(x[i], 100, 57);
+            }
+            y = Transformations.SpikesFunction(y, m, sigma);
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))    
+                    series.Points.AddXY(x[i], y[i]);
+            }
+        }
+
+        private void DrawShift(double[] x, Chart chart)
+        {
+            double m = Double.Parse(tbM11.Text);
+            double sigma = Double.Parse(tbSigma11.Text);
+            double shift = Double.Parse(tbShift.Text);
+            double[] y = new double[x.Length];
+
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Line;
+            for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = Functions.HarmonicFunction(x[i], 100, 57);
+            }
+            y = Transformations.ShiftFunction( y, shift);
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series.Points.AddXY(x[i], y[i]);
+            }
+        }
+
+
+        private void DrawFurie(double[] x, Chart chart)
+        {
+           // double a = Double.Parse(tbA10.Text);
+          //  double b = Double.Parse(tbB10.Text);
+            double[] y = new double[x.Length];
+
+            chart.Series.Clear();
+            Series series = chart.Series.Add("f(x)");
+            series.ChartType = SeriesChartType.Spline;
+
+            double[] a = new double[3];
+            double[] b = new double[3];
+
+            a[0] = 100;
+            b[0] = 57;
+            a[1] =30;
+            b[1] = 45;
+            a[2] = 20;
+            b[2] = 34;
+
+            for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = Functions.PolyHarmonicFunction(x[i], a, b);
+            }
+            y = Transformations.FurieFunction(y);
+
+            double deltaT = x[1] - x[0];
+
+            double Fgr = 1 / (2 * deltaT);
+
+            double deltaF = Fgr / (x.Length / 2);
+            double left = 0;
+          
+            for (int i = 0; i < x.Length; i++)
+            {
+                x[i] = left + i * deltaF;
+
+            }
+            for (int i = 0; i < x.Length/2; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series.Points.AddXY(x[i], y[i]);
+               
+            }
+          
+        }
+
+        private void DrawTrendFurie(double[] x, Chart chart)
+        {
+             double a = Double.Parse(tbA13.Text);
+              double b = Double.Parse(tbB13.Text);
+            double shift = Double.Parse(tbShift13.Text);
+            double[] y = new double[x.Length];
+
+            chart.Series.Clear();
+            Series series = chart.Series.Add("Trend");
+            series.ChartType = SeriesChartType.Spline;
+
+           // double[] a = new double[3];
+           // double[] b = new double[3];
+
+      
+           
+
+            for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = Functions.LinearFunction(x[i], a, b);
+            }
+            y = Transformations.FurieFunction(y);
+
+            double deltaT = x[1] - x[0];
+
+            double Fgr = 1 / (2 * deltaT);
+
+            double deltaF = Fgr / (x.Length / 2);
+            double left = 0;
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                x[i] = left + i * deltaF;
+
+            }
+            for (int i = 0; i < x.Length / 2; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series.Points.AddXY(x[i], y[i]);
+
+            }
+
+         
+           
+            Series series2 = chart.Series.Add("Shift harm");
+            series2.ChartType = SeriesChartType.Spline;
+
+            series2.Color = Color.Red;
+
+
+            for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = Functions.HarmonicFunction(x[i], 100, 67)+ shift ;
+            }
+          //  y = Functions.ShiftFunction(y, 0);
+            y = Transformations.FurieFunction(y);
+
+
+            for (int i = 0; i < x.Length / 2; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series2.Points.AddXY(x[i], y[i] );
+
+            }
+
+        }
+
+
+
         private void chData_MouseWheel(object sender, MouseEventArgs e)
         {
             Chart chart = (Chart)sender;
-
-
             if (ModifierKeys == Keys.Control)
             {
                 try
                 {
-
                     if (e.Delta < 0)
                     {
                         chart.ChartAreas[0].AxisX.ScaleView.ZoomReset();
                         chart.ChartAreas[0].AxisY.ScaleView.ZoomReset();
                     }
-
                     if (e.Delta > 0)
                     {
                         double xMin = chart.ChartAreas[0].AxisX.ScaleView.ViewMinimum;
@@ -360,12 +616,8 @@ namespace Graphics
                     }
                 }
                 catch (OverflowException) { }
-            }
-            
+            }   
         }
-
-
-
 
         private void bt1_Click(object sender, EventArgs e)
         {
@@ -376,7 +628,6 @@ namespace Graphics
             double right = 1000;
             double step = 1;
             int count = N;
-
             try
             {
                 double tmp = 0;
@@ -389,7 +640,9 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex) {
+            catch (Exception) {
+                
+      
             }
 
             for (int i = 0; i < count; i++)
@@ -435,7 +688,7 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -477,7 +730,7 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -512,7 +765,7 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -546,7 +799,7 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -626,7 +879,7 @@ namespace Graphics
                 count = (int)((right - left) / step);
                 x = new double[count];
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -636,6 +889,366 @@ namespace Graphics
             }
             Draw7(x, chartCombined);
 
+        }
+
+        private void bt7_Click(object sender, EventArgs e)
+        {
+                double[] x = new double[1000];
+                double left = 0;
+                double right = 100;
+                double step = 0.001;
+                int count = N;
+
+                try
+                {
+                    double tmp = 0;
+                    tmp = Double.Parse(tbLeft7.Text);
+                    left = tmp;
+                    tmp = Double.Parse(tbRight7.Text);
+                    right = tmp;
+                    tmp = Double.Parse(tbStep7.Text);
+                    step = tmp;
+                    count = (int)((right - left) / step);
+                    x = new double[count];
+                }
+                catch (Exception)
+                {
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    x[i] = left + i * step;
+                }
+                DrawHarm(x, chartHarm);
+
+                // SplineChartExample(chart1);
+
+            
+    
+        }
+
+        private void bt8_Click(object sender, EventArgs e)
+        {
+            double[] x = new double[1000];
+            double left = 0;
+            double right = 100;
+            double step = 0.001;
+            int count = N;
+
+            try
+            {
+                double tmp = 0;
+                tmp = Double.Parse(tbLeft8.Text);
+                left = tmp;
+                tmp = Double.Parse(tbRight8.Text);
+                right = tmp;
+                tmp = Double.Parse(tbStep8.Text);
+                step = tmp;
+                count = (int)((right - left) / step);
+                x = new double[count];
+            }
+            catch (Exception)
+            {
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                x[i] = left + i * step;
+            }
+            DrawPolyHarmonic(x, chartPolyHarm);
+
+        }
+
+        private void bt9_Click(object sender, EventArgs e)
+        {
+            double[] x = new double[1000];
+            double left = 0;
+            double right = 100;
+            double step = 0.001;
+            int count = N;
+
+            try
+            {
+                double tmp = 0;
+                tmp = Double.Parse(tbLeft9.Text);
+                left = tmp;
+                tmp = Double.Parse(tbRight9.Text);
+                right = tmp;
+                tmp = Double.Parse(tbStep9.Text);
+                step = tmp;
+                count = (int)((right - left) / step);
+                x = new double[count];
+            }
+            catch (Exception)
+            {
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                x[i] = left + i * step;
+            }
+            DrawSpikes(x, chartSpikes);
+
+        }
+
+        private void bt10_Click(object sender, EventArgs e)
+        {
+            double[] x = new double[1000];
+            double left = 0;
+            double right = 100;
+            double step = 0.001;
+            int count = N;
+
+            try
+            {
+                double tmp = 0;
+                tmp = Double.Parse(tbLeft10.Text);
+                left = tmp;
+                tmp = Double.Parse(tbRight10.Text);
+                right = tmp;
+                tmp = Double.Parse(tbStep10.Text);
+                step = tmp;
+                count = (int)((right - left) / step);
+                x = new double[count];
+            }
+            catch (Exception)
+            {
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                x[i] = left + i * step;
+            }
+            DrawFurie(x, chartFurie);
+
+        }
+
+        private void tbStep10_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void bt11_Click(object sender, EventArgs e)
+        {
+            double[] x = new double[1000];
+            double left = 0;
+            double right = 100;
+            double step = 0.001;
+            int count = N;
+
+            try
+            {
+                double tmp = 0;
+                tmp = Double.Parse(tbLeft11.Text);
+                left = tmp;
+                tmp = Double.Parse(tbRight11.Text);
+                right = tmp;
+                tmp = Double.Parse(tbStep11.Text);
+                step = tmp;
+                count = (int)((right - left) / step);
+                x = new double[count];
+            }
+            catch (Exception)
+            {
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                x[i] = left + i * step;
+            }
+            DrawShift(x, chartShift);
+        }
+
+        private void bt12_Click(object sender, EventArgs e)
+        {
+           
+            double leftHB = 0;
+            double rightHB= 200;
+            double stepHB = 1;
+            int countHB = N;
+
+            double left = 0;
+            double right = 100;
+            double step = 0.001;
+            int count = N;
+            try
+            {
+                double tmp = 0;
+                tmp = Double.Parse(tbLeftHB.Text);
+                leftHB = tmp;
+                tmp = Double.Parse(tbRightHB.Text);
+                rightHB = tmp;
+                tmp = Double.Parse(tbStepHB.Text);
+                stepHB = tmp;
+                countHB = (int)((rightHB - leftHB) / stepHB);
+               
+                tmp = Double.Parse(tbLeft12.Text);
+                left = tmp;
+                tmp = Double.Parse(tbRight12.Text);
+                right = tmp;
+                tmp = Double.Parse(tbStep12.Text);
+                step = tmp;
+                count = (int)((right - left) / step);
+       
+           
+           
+            }
+            catch (Exception)
+            {
+            }
+            double hDelta = stepHB;
+            int hCount = countHB;
+            double xDelta = step;
+            int xCount = count;
+
+
+
+
+
+
+
+            DrawHeartBeat(xDelta,xCount,hDelta, hCount, chartHeartBeat);
+
+        }
+
+        private void bt13_Click(object sender, EventArgs e)
+        {
+     
+                double[] x = new double[1000];
+                double left = 0;
+                double right = 100;
+                double step = 0.001;
+                int count = N;
+
+                try
+                {
+                    double tmp = 0;
+                    tmp = Double.Parse(tbLeft13.Text);
+                    left = tmp;
+                    tmp = Double.Parse(tbRight13.Text);
+                    right = tmp;
+                    tmp = Double.Parse(tbStep13.Text);
+                    step = tmp;
+                    count = (int)((right - left) / step);
+                    x = new double[count];
+                }
+                catch (Exception)
+                {
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    x[i] = left + i * step;
+                }
+                DrawTrendFurie(x, chartTrendFurie);
+
+            
+        }
+
+        private void DrawFurieButton(Chart chart) {
+            // double a = Double.Parse(tbA10.Text);
+            //  double b = Double.Parse(tbB10.Text);
+            Series series = chart.Series.FindByName(FUNCTION_NAME);
+
+                double[] y = series.Points.Select(item => item.YValues[0]).ToArray();
+
+                double[] x = series.Points.Select(item => item.XValue).ToArray();
+
+            chart.Series.Clear();
+             series = chart.Series.Add(FUNCTION_NAME);
+            series.ChartType = SeriesChartType.Spline;
+
+
+            y = Transformations.FurieFunction(y);
+
+            double deltaT = x[1] - x[0];
+
+            double Fgr = 1 / (2 * deltaT);
+
+            double deltaF = Fgr / (x.Length / 2);
+            double left = 0;
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                x[i] = left + i * deltaF;
+
+            }
+            for (int i = 0; i < x.Length / 2; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series.Points.AddXY(x[i], y[i]);
+
+            }
+
+        }
+
+        private void btFurie1_Click(object sender, EventArgs e)
+        {
+            DrawFurieButton(chart1);
+        }
+
+        private void btFurie2_Click(object sender, EventArgs e)
+        {
+            DrawFurieButton(chart2);
+        }
+
+        private void btFurie3_Click(object sender, EventArgs e)
+        {
+            DrawFurieButton(chart3);
+        }
+
+        private void btFurie4_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chart4);
+        }
+
+        private void btFurie5_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chart5);
+        }
+
+        private void btFurie6_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartCombined);
+        }
+
+        private void btFurie7_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartHarm);
+        }
+
+        private void btFurie8_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartPolyHarm);
+        }
+
+        private void btFurie9_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartSpikes);
+        }
+
+        private void btFurie11_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartShift);
+        }
+
+        private void btFurie10_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartFurie);
+        }
+
+        private void btFurie12_Click(object sender, EventArgs e)
+        {
+
+            DrawFurieButton(chartHeartBeat);
         }
     }
 }

@@ -65,7 +65,6 @@ namespace Graphics
                 return Math.Log(x) + 1;
             }
         }
-
         public static double HarmonicFunction(double x, double a, double f0)
         {
             return a * Math.Sin(2 * Math.PI * f0 * x);
@@ -81,96 +80,12 @@ namespace Graphics
             }
             return result;
         }
-
-        public static double[] SpikesFunction(double m, double[] y, double sigma)
-        {
-            for (int i = 0; i < m; i++)
-            {
-                int index = rnd.Next(0, y.Length - 1);
-                int sign = rnd.Next(0, 2);
-                int n = y.Length;
-                double aSmin = n * 10 * sigma;
-                double aSmax = (n + 1) * 10 * sigma;
-
-                double aS = aSmin + rnd.NextDouble() * (aSmax - aSmin);
-
-                if (sign == 0)
-                {
-                    y[index] -= aS;
-                }
-                else
-                {
-                    y[index] += aS;
-                }
-            }
-            return y;
-
-        }
-
-
-        public static double[] ShiftFunction(double[] y, double sigma)
-        {
-            for (int i = 0; i < y.Length; i++)
-            {
-                    y[i] += sigma;      
-            }
-            return y;
-
-        }
-
-        public static double[] FurieFunction(double[] y)
-        {
-            int n = y.Length;
-            double[] res = new double[n];
-            for (int i = 0; i < n; i++)
-            {
-                double Rei = 0;
-                for (int k = 0; k < n; k++)
-                {
-                    Rei += y[k] * Math.Cos((Math.PI * 2 * i * k) / n);
-                }
-                double Imi = 0;
-                for (int k = 0; k < n; k++)
-                {
-                    Rei += y[k] * Math.Sin((Math.PI * 2 * i * k) / n);
-                }
-                Rei = Rei / n;
-                Imi = Imi / n;
-                res[i] = Math.Sqrt(Math.Pow(Rei, 2) + Math.Pow(Imi, 2));
-            }
-            return res;
-        }
-
         public static double HeartBeatFunction(double x, double f0, double alpha)
         {
 
             return Math.Sin(2 * Math.PI * f0 * x) * Math.Pow(Math.E,-alpha*x);
         }
-        public static double[] ConvolutionFunction(double[] h, double [] y  )
-        {
-            int n = y.Length;
-            int m = h.Length;
-            double[] res = new double[n+m];
-            for (int k = 0; k < res.Length; k++)
-            {
-                double yk = 0;
-                for (int l = 0; l < m; l++)
-                {
-                    if ((k - l < 0) || (k - l >= n))
-                    {
 
-                    }
-                    else
-                    {
-                        yk = yk + y[k - l] * h[l];
-                    }
-
-                }
-                res[k] = yk;
-  
-            }
-            return res;
-        }
 
 
     }

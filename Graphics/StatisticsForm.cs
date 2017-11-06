@@ -14,37 +14,36 @@ namespace Graphics
     public partial class StatisticsForm : Form
     {
         public Chart chart;
-        RandomGenerator customGenerator = new RandomGenerator();
-        Statistics statistics;
+        RandomGenerator customGenerator = new RandomGenerator();     
 
 
         public StatisticsForm(Chart chart, string functionName)
         {
             InitializeComponent();
             this.chart = chart;
-            statistics = new Statistics(chart);
+            
             Series series = chart.Series.FindByName(functionName);
 
-            lbMean.Text = statistics.ExpectedValue(functionName).ToString();
-            lbMeanSquare.Text = statistics.MeanSquare(functionName).ToString();
-            lbMeanSquareError.Text = statistics.MeanSquareError(functionName).ToString();
-            lbVariance.Text = statistics.Variance(functionName).ToString();
-            lbStandartDeviation.Text = statistics.StandartDeviation(functionName).ToString();
-            lbCentralMoment3.Text = statistics.CentralMoment(functionName, 3).ToString();
-            lbCentralMoment4.Text = statistics.CentralMoment(functionName, 4).ToString();
+            lbMean.Text = Statistics.ExpectedValue(series.Points).ToString();
+            lbMeanSquare.Text = Statistics.MeanSquare(series.Points).ToString();
+            lbMeanSquareError.Text = Statistics.MeanSquareError(series.Points).ToString();
+            lbVariance.Text = Statistics.Variance(series.Points).ToString();
+            lbStandartDeviation.Text = Statistics.StandartDeviation(series.Points).ToString();
+            lbCentralMoment3.Text = Statistics.CentralMoment(series.Points, 3).ToString();
+            lbCentralMoment4.Text = Statistics.CentralMoment(series.Points, 4).ToString();
             Chart randomChart = new Chart();
             DrawRandomChart(randomChart, functionName);
             DrawAutocorrelationChart(chartAutoCorrelation, functionName, series.Points.Count);
             DrawCrossCorrelationChart(chartCrossCorelation, randomChart, functionName, series.Points.Count);
 
-            lbSkewness.Text = statistics.Skewness(functionName).ToString();
-            lbKurtosis.Text = statistics.Kurtosis(functionName).ToString();
+            lbSkewness.Text = Statistics.Skewness(series.Points).ToString();
+            lbKurtosis.Text = Statistics.Kurtosis(series.Points).ToString();
 
 
-            double[] y = statistics.Density(functionName, 30);
+            double[] y = Statistics.Density(series.Points, 30);
             DrawDensity(y, functionName);
 
-            lbIsStatic.Text = statistics.isStatic(functionName).ToString();
+            lbIsStatic.Text = Statistics.isStatic(series.Points).ToString();
          
 
         }
@@ -156,7 +155,7 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                    series.Points.AddXY(x[i], statistics.Autocorrelation(functionName,x[i]));
+                    series.Points.AddXY(x[i], Statistics.Autocorrelation(series.Points,x[i]));
             }
         }
 
@@ -173,7 +172,7 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                series.Points.AddXY(x[i], statistics.Crosscorrelation(arr1,arr2, x[i]));
+                series.Points.AddXY(x[i], Statistics.Crosscorrelation(arr1,arr2, x[i]));
             }
         }
 

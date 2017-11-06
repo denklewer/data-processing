@@ -9,19 +9,10 @@ namespace Graphics
 {
    public class Statistics
     {
-        Chart chart;
-        public Statistics(Chart chart)
-        {
-            this.chart = chart;
-        }
 
-        public double ExpectedValue(string functionName) {
-            Series series = chart.Series.FindByName(functionName);
-            return ExpectedValue(series.Points);
-        
-        }
 
-        public double ExpectedValue(DataPointCollection arr) {
+
+        public static double ExpectedValue(DataPointCollection arr) {
             double sum = 0;
             foreach (var point in arr)
             {
@@ -32,7 +23,7 @@ namespace Graphics
             return sum / arr.Count;
         }
 
-        public double ExpectedValue(IEnumerable<DataPoint> arr)
+        public static double ExpectedValue(IEnumerable<DataPoint> arr)
         {
             double sum = 0;
             foreach (var point in arr)
@@ -46,12 +37,8 @@ namespace Graphics
 
 
 
-        public double MeanSquare(string functionName) {
-            Series series = chart.Series.FindByName(functionName);
-            return MeanSquare(series.Points);
-        }
 
-        public double MeanSquare(DataPointCollection arr) {
+        public static double MeanSquare(DataPointCollection arr) {
             double sum = 0;
             foreach (var point in arr)
             {
@@ -61,7 +48,7 @@ namespace Graphics
             }
             return sum / arr.Count;
         }
-        public double MeanSquare(IEnumerable<DataPoint> arr)
+        public static double MeanSquare(IEnumerable<DataPoint> arr)
         {
             double sum = 0;
             foreach (var point in arr)
@@ -72,26 +59,21 @@ namespace Graphics
             }
             return sum / arr.Count();
         }
-        public double MeanSquareError(string functionName) {
-            return Math.Sqrt(MeanSquare(functionName));
-        }
+      
 
-        public double MeanSquareError(DataPointCollection arr)
+        public static double MeanSquareError(DataPointCollection arr)
         {
             return Math.Sqrt(MeanSquare(arr));
         }
 
-        public double MeanSquareError(IEnumerable<DataPoint> arr)
+        public static double MeanSquareError(IEnumerable<DataPoint> arr)
         {
             return Math.Sqrt(MeanSquare(arr));
         }
 
-        public double Variance(string functionName) { 
-            Series series = chart.Series.FindByName(functionName);
-            return Variance(series.Points);   
-        }
 
-        public double Variance(DataPointCollection arr)
+
+        public static double Variance(DataPointCollection arr)
         {
             double Mx = ExpectedValue(arr);
             double sum = 0;
@@ -104,7 +86,7 @@ namespace Graphics
             return sum / arr.Count;
         }
 
-        public double Variance(IEnumerable<DataPoint> arr)
+        public static double Variance(IEnumerable<DataPoint> arr)
         {
             double Mx = ExpectedValue(arr);
             double sum = 0;
@@ -116,37 +98,35 @@ namespace Graphics
             }
             return sum / arr.Count();
         }
-        public double StandartDeviation(string functionName) {
-            return Math.Sqrt(Variance(functionName));
-        }
-        public double StandartDeviation(DataPointCollection arr)
+
+        public static double StandartDeviation(DataPointCollection arr)
         {
             return Math.Sqrt(Variance(arr));
         }
 
-        public double StandartDeviation(IEnumerable<DataPoint> arr)
+        public static double StandartDeviation(IEnumerable<DataPoint> arr)
         {
             return Math.Sqrt(Variance(arr));
         }
-        public double CentralMoment(string functionName, int k) {
-            double Mx = ExpectedValue(functionName);
-            Series series = chart.Series.FindByName(functionName);
+        public static double CentralMoment(DataPointCollection arr, int k) {
+            double Mx = ExpectedValue(arr);
+         
             double sum = 0;
-            foreach (var point in series.Points)
+            foreach (var point in arr)
             {
 
                 sum += Math.Pow((point.YValues[0] - Mx), k);
 
             }
-            return sum / series.Points.Count;
+            return sum / arr.Count;
         }
         /// <summary>
         /// Коэффициент ассиметрии
         /// </summary>
         /// <param name="functionName"> Имя функции в объекте chart</param>
         /// <returns> Коэффициент ассиметрии</returns>
-        public double Skewness(string functionName) {
-            return CentralMoment(functionName, 3) / (Math.Pow(StandartDeviation(functionName), 3));
+        public static double Skewness(DataPointCollection arr) {
+            return CentralMoment(arr, 3) / (Math.Pow(StandartDeviation(arr), 3));
 
         }
         /// <summary>
@@ -154,35 +134,35 @@ namespace Graphics
         /// </summary>
         /// <param name="functionName"> Имя функции в объекте chart</param>
         /// <returns> Коэффициент эксцесса</returns>
-        public double Kurtosis(string functionName)
+        public static double Kurtosis(DataPointCollection arr)
         {
-            return CentralMoment(functionName, 4) / (Math.Pow(StandartDeviation(functionName), 4));
+            return CentralMoment(arr, 4) / (Math.Pow(StandartDeviation(arr), 4));
         }
 
-        public double[] Density(string functionName, int M) {
-            Series series = chart.Series.FindByName(functionName);
-            double lMin = series.Points.Min(x=>x.YValues[0]);
-            double lMax = series.Points.Max(x => x.YValues[0]);
+        public static double[] Density(DataPointCollection arr, int M) {
+           
+            double lMin = arr.Min(x=>x.YValues[0]);
+            double lMax = arr.Max(x => x.YValues[0]);
             double divisor = (lMax - lMin) / M;
             double[] ans = new double[M];
-            foreach (var point in series.Points)
+            foreach (var point in arr)
             {
                 try
                 {
                     ans[(int)Math.Floor((point.YValues[0] - lMin) / divisor)] += 1;
                 }
-                catch (Exception ex) {
+                catch (Exception) {
                     ans[ans.Length - 1] += 1;
                 }
             }
             for (int i = 0; i < ans.Length; i++)
             {
-                ans[i] /= series.Points.Count;
+                ans[i] /= arr.Count;
             }
             return ans;
         }
 
-        public double Crosscorrelation(DataPointCollection arr1, DataPointCollection arr2, int lag) {
+        public static double Crosscorrelation(DataPointCollection arr1, DataPointCollection arr2, int lag) {
             if (arr1.Count != arr2.Count) {
                 throw new Exception("Lengths of function arrays are different");
             }
@@ -198,22 +178,22 @@ namespace Graphics
             return sum / ((arr1.Count - lag)*variance);
 
         }
-        public double Autocorrelation(string functionName, int lag) {
-            Series series = chart.Series.FindByName(functionName);
-            return Crosscorrelation(series.Points, series.Points, lag);
+        public static double Autocorrelation(DataPointCollection arr, int lag) {
+         
+            return Crosscorrelation(arr, arr, lag);
         }
-        public Boolean isStatic(string functionName) {
-            Series series = chart.Series.FindByName(functionName);
-            DataPointCollection points = series.Points;
-            int shag = points.Count / 10;
+        public static Boolean isStatic(DataPointCollection arr) {
+           
+          
+            int shag = arr.Count / 10;
             double[] means = new double[10];
             double[] meansquares = new double[10];
             double[] deviations = new double[10];
             for (int i = 0; i < 10; i++) 
             {
-                means[i] = ExpectedValue(points.Skip(shag * i).Take(shag));
-                meansquares[i] = MeanSquare(points.Skip(shag * i).Take(shag));
-                deviations[i] = StandartDeviation(points.Skip(shag * i).Take(shag));
+                means[i] = ExpectedValue(arr.Skip(shag * i).Take(shag));
+                meansquares[i] = MeanSquare(arr.Skip(shag * i).Take(shag));
+                deviations[i] = StandartDeviation(arr.Skip(shag * i).Take(shag));
             }
             for (int i = 0; i < means.Length; i++)
             {
