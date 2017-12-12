@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tbFile = new System.Windows.Forms.TextBox();
+            this.btnFile = new System.Windows.Forms.Button();
             this.panelTransformParams = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btStatistics = new System.Windows.Forms.Button();
@@ -56,6 +58,8 @@
             this.tbStep = new System.Windows.Forms.TextBox();
             this.tbRight = new System.Windows.Forms.TextBox();
             this.tbLeft = new System.Windows.Forms.TextBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btWrite = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -65,39 +69,42 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Black;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.AxisX.LabelStyle.IsStaggered = true;
-            chartArea1.AxisX.MinorGrid.Enabled = true;
-            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea1.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisX.MinorTickMark.Enabled = true;
-            chartArea1.AxisY.MinorGrid.Enabled = true;
-            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea1.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisY.MinorTickMark.Enabled = true;
-            chartArea1.Name = "1";
-            this.chart.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.LabelStyle.IsStaggered = true;
+            chartArea2.AxisX.MinorGrid.Enabled = true;
+            chartArea2.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea2.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea2.AxisX.MinorTickMark.Enabled = true;
+            chartArea2.AxisY.MinorGrid.Enabled = true;
+            chartArea2.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea2.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea2.AxisY.MinorTickMark.Enabled = true;
+            chartArea2.Name = "1";
+            this.chart.ChartAreas.Add(chartArea2);
             this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.chart.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.chart.Legends.Add(legend2);
             this.chart.Location = new System.Drawing.Point(0, 0);
             this.chart.Name = "chart";
-            series1.ChartArea = "1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "1";
-            this.chart.Series.Add(series1);
+            series2.ChartArea = "1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "1";
+            this.chart.Series.Add(series2);
             this.chart.Size = new System.Drawing.Size(735, 678);
             this.chart.TabIndex = 8;
             this.chart.Text = "y=ax+b";
-            title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            title1.Name = "Title1";
-            title1.Text = "y=ax+b";
-            this.chart.Titles.Add(title1);
+            title2.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            title2.Name = "Title1";
+            title2.Text = "Graphics";
+            this.chart.Titles.Add(title2);
             this.chart.MouseEnter += new System.EventHandler(this.chart_MouseEnter);
             this.chart.MouseLeave += new System.EventHandler(this.chart1_MouseLeave);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btWrite);
+            this.panel1.Controls.Add(this.tbFile);
+            this.panel1.Controls.Add(this.btnFile);
             this.panel1.Controls.Add(this.panelTransformParams);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.panelFunctionParams);
@@ -122,6 +129,24 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(315, 678);
             this.panel1.TabIndex = 9;
+            // 
+            // tbFile
+            // 
+            this.tbFile.Location = new System.Drawing.Point(165, 36);
+            this.tbFile.Name = "tbFile";
+            this.tbFile.Size = new System.Drawing.Size(138, 22);
+            this.tbFile.TabIndex = 34;
+            this.tbFile.Text = "D:\\php.dat";
+            // 
+            // btnFile
+            // 
+            this.btnFile.Location = new System.Drawing.Point(165, 64);
+            this.btnFile.Name = "btnFile";
+            this.btnFile.Size = new System.Drawing.Size(138, 31);
+            this.btnFile.TabIndex = 33;
+            this.btnFile.Text = "Open File";
+            this.btnFile.UseVisualStyleBackColor = true;
+            this.btnFile.Click += new System.EventHandler(this.btnFile_Click);
             // 
             // panelTransformParams
             // 
@@ -248,8 +273,22 @@
             "Spikes(F(x),M,Sigma)",
             "Shift(F(x),shift)",
             "RandomSpikes(x,spikes)",
-            "ConvolutionFunction(y,h)",
-            "ConvolutionWithHeartBeat(x,f0,alpha,hLeft,hRight,hStep)"});
+            "ConvolutionWithHeartBeat(x,f0,alpha,hLeft,hRight,hStep)",
+            "AddRandom",
+            "AntiShift",
+            "AntiSpike",
+            "AntiRandom",
+            "AntiTrend",
+            "LPW",
+            "HPF",
+            "BPF",
+            "BSF",
+            "Multiply",
+            "Cut(left_cut, right_cut)",
+            "ConvolutionWithLpf(x,fcut,m,dt)",
+            "ConvolutionWithHpf(x,fcut,m,dt)",
+            "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)",
+            "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)"});
             this.cbTransform.Location = new System.Drawing.Point(97, 412);
             this.cbTransform.Name = "cbTransform";
             this.cbTransform.Size = new System.Drawing.Size(209, 24);
@@ -286,7 +325,8 @@
             "Combined",
             "Harmonic(A,f)",
             "PolyHarmonic (A1-3,f1-3)",
-            "HeartBeat"});
+            "HeartBeat",
+            "Random(a,b)"});
             this.cbFunction.Location = new System.Drawing.Point(97, 107);
             this.cbFunction.Name = "cbFunction";
             this.cbFunction.Size = new System.Drawing.Size(206, 24);
@@ -297,7 +337,7 @@
             // lbLeft
             // 
             this.lbLeft.AutoSize = true;
-            this.lbLeft.Location = new System.Drawing.Point(56, 15);
+            this.lbLeft.Location = new System.Drawing.Point(18, 15);
             this.lbLeft.Name = "lbLeft";
             this.lbLeft.Size = new System.Drawing.Size(36, 17);
             this.lbLeft.TabIndex = 12;
@@ -306,7 +346,7 @@
             // lbRight
             // 
             this.lbRight.AutoSize = true;
-            this.lbRight.Location = new System.Drawing.Point(50, 43);
+            this.lbRight.Location = new System.Drawing.Point(12, 43);
             this.lbRight.Name = "lbRight";
             this.lbRight.Size = new System.Drawing.Size(45, 17);
             this.lbRight.TabIndex = 11;
@@ -315,7 +355,7 @@
             // lbStep
             // 
             this.lbStep.AutoSize = true;
-            this.lbStep.Location = new System.Drawing.Point(51, 71);
+            this.lbStep.Location = new System.Drawing.Point(13, 71);
             this.lbStep.Name = "lbStep";
             this.lbStep.Size = new System.Drawing.Size(41, 17);
             this.lbStep.TabIndex = 10;
@@ -323,7 +363,7 @@
             // 
             // tbStep
             // 
-            this.tbStep.Location = new System.Drawing.Point(97, 68);
+            this.tbStep.Location = new System.Drawing.Point(59, 68);
             this.tbStep.Name = "tbStep";
             this.tbStep.Size = new System.Drawing.Size(100, 22);
             this.tbStep.TabIndex = 9;
@@ -331,7 +371,7 @@
             // 
             // tbRight
             // 
-            this.tbRight.Location = new System.Drawing.Point(97, 40);
+            this.tbRight.Location = new System.Drawing.Point(59, 40);
             this.tbRight.Name = "tbRight";
             this.tbRight.Size = new System.Drawing.Size(100, 22);
             this.tbRight.TabIndex = 8;
@@ -339,11 +379,26 @@
             // 
             // tbLeft
             // 
-            this.tbLeft.Location = new System.Drawing.Point(97, 12);
+            this.tbLeft.Location = new System.Drawing.Point(59, 12);
             this.tbLeft.Name = "tbLeft";
             this.tbLeft.Size = new System.Drawing.Size(100, 22);
             this.tbLeft.TabIndex = 7;
             this.tbLeft.Text = "-10";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // btWrite
+            // 
+            this.btWrite.Enabled = false;
+            this.btWrite.Location = new System.Drawing.Point(165, 3);
+            this.btWrite.Name = "btWrite";
+            this.btWrite.Size = new System.Drawing.Size(138, 31);
+            this.btWrite.TabIndex = 35;
+            this.btWrite.Text = "Write Wav";
+            this.btWrite.UseVisualStyleBackColor = true;
+            this.btWrite.Click += new System.EventHandler(this.btWrite_Click);
             // 
             // MainWindow
             // 
@@ -388,5 +443,9 @@
         private System.Windows.Forms.Panel panelTransformParams;
         private System.Windows.Forms.Panel panelFunctionParams;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TextBox tbFile;
+        private System.Windows.Forms.Button btnFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btWrite;
     }
 }

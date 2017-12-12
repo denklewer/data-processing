@@ -191,5 +191,10 @@ namespace Graphics
         {
 
         }
+
+        private void lbMeanSquare_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

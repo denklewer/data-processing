@@ -50,6 +50,17 @@ namespace Graphics
             return d;
         }
 
+
+        public static double RandomFunction(double x, double low, double high)
+        {
+
+            double d;
+
+            d =low + rnd.NextDouble() * (high - low);
+
+            return d;
+        }
+
         public static double CombinedFunction(double x)
         {
             if (x < 0)
@@ -85,6 +96,8 @@ namespace Graphics
 
             return Math.Sin(2 * Math.PI * f0 * x) * Math.Pow(Math.E,-alpha*x);
         }
+
+
 
 
 

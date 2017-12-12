@@ -36,6 +36,18 @@ namespace Graphics
         }
 
 
+        public static double ExpectedValue(double[] arr)
+        {
+            double sum = 0;
+            for (int i =0; i< arr.Length; i++)
+            {
+
+                sum += arr[i];
+
+            }
+            return sum / arr.Length;
+        }
+
 
 
         public static double MeanSquare(DataPointCollection arr) {
@@ -99,7 +111,25 @@ namespace Graphics
             return sum / arr.Count();
         }
 
+        public static double Variance(double[] arr)
+        {
+            double Mx = ExpectedValue(arr);
+            double sum = 0;
+            foreach (var point in arr)
+            {
+
+                sum += Math.Pow((point - Mx), 2);
+
+            }
+            return sum / arr.Length;
+        }
+
+
         public static double StandartDeviation(DataPointCollection arr)
+        {
+            return Math.Sqrt(Variance(arr));
+        }
+        public static double StandartDeviation(double[] arr)
         {
             return Math.Sqrt(Variance(arr));
         }

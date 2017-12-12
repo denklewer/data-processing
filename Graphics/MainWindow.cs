@@ -1,12 +1,12 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
@@ -20,6 +20,12 @@ namespace Graphics
         private int N = 1000;
         private int seriesCount = 1;
         private String functionName = "x=10";
+
+
+
+        private static int startCut;
+        private static int endCut;
+        private static double dT;
 
         public MainWindow()
         {
@@ -198,8 +204,9 @@ namespace Graphics
                 }
             }
 
-            double[] funValue = new double[x.Length];
-            funValue = transformX(x, args);
+            //double[] funValue = new double[x.Length];
+
+            double[] funValue = transformX(x, args);
             return funValue;
 
         }
@@ -216,9 +223,9 @@ namespace Graphics
                     args[i] = Double.Parse(item.Text);
                     i--;
                 }
-            }      
-            double[] funValue = new double[x.Length];
-            funValue = transformY(x, args);
+            }
+            //  double[] funValue = new double[x.Length];
+            double[] funValue = transformY(x, args);
             return funValue;
 
         }
@@ -298,6 +305,12 @@ namespace Graphics
                         addParameters(panelFunctionParams, new string[] { "A", "f" });
                         break;
                     }
+                case "Random(a,b)":
+                    {
+                        fun = new Func<Double[], Double>(x => Functions.RandomFunction(x[0], x[1], x[2]));
+                        addParameters(panelFunctionParams, new string[] { "Low", "High" });
+                        break;
+                    }
 
                 default:
                     {
@@ -351,11 +364,11 @@ namespace Graphics
             series.ChartArea = chartAreaNum;
         
             series.ChartType = SeriesChartType.Line;
+           // Parallel.Invoke(() => { x = TransformFunX(x); y = TransformFunX(y); });
 
+             x = TransformFunX(x);
 
-            x = TransformFunX(x);
-
-            y = TransformFunY(y);
+             y = TransformFunY(y);
             series.Points.Clear();
             for (int i = 0; i < x.Length; i++)
             {
@@ -366,7 +379,7 @@ namespace Graphics
 
             }
             // chart.ChartAreas[chartAreaNum].RecalculateAxesScale();
-           /* chart.ChartAreas[chartAreaNum].AxisX.MinorGrid.Enabled = false;
+          /*  chart.ChartAreas[chartAreaNum].AxisX.MinorGrid.Enabled = false;
             chart.ChartAreas[chartAreaNum].AxisX.MajorGrid.Enabled = false;
             chart.ChartAreas[chartAreaNum].AxisY.MinorGrid.Enabled = false;
             chart.ChartAreas[chartAreaNum].AxisY.MajorGrid.Enabled = false;*/
@@ -419,6 +432,185 @@ namespace Graphics
                         addParameters(panelTransformParams, new string[] { "f0", "alpha", "hLeft", "hRight", "hStep" });
                         break;
                     }
+                case "ConvolutionWithLpf(x,fcut,m,dt)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            int m =(int) args[1];
+                            return Transformations.ConwolutionWithLpf(y, args[0], m, dT)
+                              .Skip(m).Take(y.Length).ToArray();       
+                            });
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "fcut", "m"});
+                        break;
+                    }
+                case "ConvolutionWithHpf(x,fcut,m,dt)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithHpf(y, args[0], args[1], dT).Skip((int)args[1]).Take(y.Length).ToArray());
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "fcut", "m" });
+                        break;
+                    }
+                case "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray().Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBpf(y, args[0], args[1], args[2],dT)
+                                                                                                        .Skip((int)args[1])
+                                                                                                        .Take(y.Length)
+                                                                                                        .ToArray());
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "fcut1","fcut2", "m" });
+
+                        break;
+                    }
+                case "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBsf(y, args[0], args[1], args[2], dT)
+                                                                                                        .Skip((int)args[1])
+                                                                                                        .Take(y.Length)
+                                                                                                        .ToArray());
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m" });
+
+                        break;
+                    }
+                case "AddRandom":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            for (int i = 0; i < args[1]; i++)
+                            {
+                                y = Transformations.AddRandom(y, args[0]);
+                            }
+                           
+                            return y;
+                        });
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "A","M"});
+                        break;
+                    }
+                case "AntiRandom":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        double left = Double.Parse(tbLeft.Text);
+                        double right = Double.Parse(tbRight.Text);
+                        double step = Double.Parse(tbStep.Text);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiRandomFunction(left,right,step,y,args[0],args[1],args[2]));
+                        addParameters(panelTransformParams, new string[] {"A", "F","CanalsCount"});
+                        break;
+                    }
+                case "AntiShift": {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);       
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiShifFunction(y));
+                        addParameters(panelTransformParams, new string[] { });
+                        break;
+                    }
+                case "AntiSpike":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiSpikeFunction(y));
+                        addParameters(panelTransformParams, new string[] { });
+                        break;
+                    }
+                case "AntiTrend": {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            
+                          double [] newY=  Transformations.AvgSlidingWindow(y, (int)args[0]);             
+                            return y;
+                        });
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { "width" });
+                        break;
+                    }
+                case "LPW":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => Transformations.LpfX((int)args[1]));
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Lpf(args[0],(int)args[1],args[2]));
+                        addParameters(panelTransformParams, new string[] { "fcut" , "m", "dt"});
+                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
+                        break;
+                    }
+                case "HPF":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => Transformations.LpfX((int)args[1]));
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Hpf(args[0], (int)args[1], args[2]));
+                        addParameters(panelTransformParams, new string[] { "fcut", "m", "dt" });
+                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
+                        break;
+                    }
+                case "BPF":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => Transformations.LpfX((int)args[2]));
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Bpf(args[0],args[1], (int)args[2], args[3]));
+                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m", "dt" });
+                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
+                        break;
+                    }
+                case "BSF":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => Transformations.LpfX((int)args[2]));
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Bsf(args[0], args[1], (int)args[2], args[3]));
+                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m", "dt" });
+                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
+                        break;
+                    }
+                case "Multiply":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Multiply(y, args[0]));
+                        addParameters(panelTransformParams, new string[] {  "2*m+1" });
+                  
+                        break;
+                    }
+                case "Cut(left_cut, right_cut)":
+                    {
+
+                  
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => {
+                            int start = 0;
+                            int end = y.Length;
+                            double leftBorder = args[0];
+                            double rightBorder = args[1];
+
+                            Series series = chart.Series.FindByName(cbArea.Text);
+                            for (int i = 0; i < y.Length; i++)
+                            {
+                                if (y[i] > leftBorder)
+                                {
+                                    start = i;
+                                    break;
+                                }
+
+                            }
+                            for (int i = y.Length-1; i > 0; i--)
+                            {
+                                if (y[i] < rightBorder)
+                                {
+                                    end = i;
+                                    break;
+                                }
+                            }
+                            startCut = start;
+                            endCut = end;
+                            return Transformations.CutX(y, start, end); });
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            return Transformations.CutY(y, startCut, endCut);                                                   
+                            });
+                        addParameters(panelTransformParams, new string[] { "left_cut","right_cut" });
+
+                        break;
+
+                    }
+
 
                 default:
                     {
@@ -431,7 +623,10 @@ namespace Graphics
         private void btAddArea_Click(object sender, EventArgs e)
         {
             string chartAreaNum = cbArea.Text;
-            chart.ChartAreas.Add(chartAreaNum);
+            if (chart.ChartAreas.FindByName(chartAreaNum) == null)
+            {
+                chart.ChartAreas.Add(chartAreaNum);
+            }
             cbArea.Items.Add(chartAreaNum);
             validateSetings();
         }
@@ -455,6 +650,156 @@ namespace Graphics
         {
             StatisticsForm statisticsForm = new StatisticsForm(chart, functionName);
             statisticsForm.Show();
+        }
+
+        private void fileSystemWatcher1_Changed(object sender, System.IO.FileSystemEventArgs e)
+        {
+
+        }
+
+        public static WaveFormat waveFormat;
+
+        private void btnFile_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                return;
+            // получаем выбранный файл
+            string filename = openFileDialog1.FileName;
+            tbFile.Text = filename;
+
+            MessageBox.Show("Файл открыт");
+             String[]  arr = filename.Split('.');
+
+            double[] y=new double[100];
+
+            double[] x;
+            switch (arr.Last()) {
+                case "dat": {
+                        y = readHex(filename);
+                        x = new double[y.Length];
+                        for (int i = 0; i < x.Length; i++)
+                        {
+                            x[i] = i;
+                        }
+                        dT = 1.0 / 1000;
+                        break; 
+                    }
+                case "wav": {
+                        
+                        y = readWav(filename, out int rate, out waveFormat);
+                        x = new double[y.Length];
+                        dT = 1.0 / rate;
+                        double dt = 1.0 / rate;
+                        for (int i = 0; i < x.Length; i++)
+                        {
+                            x[i] = i*dt;
+                        }
+                        btWrite.Enabled = true;
+
+
+                        break;
+                    }
+                default: {
+                        MessageBox.Show("Неверный формат файла");
+                        return;                     
+                    }
+            }
+
+  
+            Series series = chart.Series.FindByName(cbArea.Text);
+         
+          
+            string chartAreaNum = cbArea.Text;
+            chart.Series.Remove(chart.Series.FindByName(chartAreaNum));
+
+
+            series = chart.Series.Add(chartAreaNum);
+            functionName = chartAreaNum;
+            series.ChartArea = chartAreaNum;
+
+            series.ChartType = SeriesChartType.Line;
+
+            series.Points.Clear();
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (!Double.IsInfinity(y[i]) && !Double.IsNaN(y[i]))
+                    series.Points.AddXY(x[i], y[i]);
+
+
+
+            }
+
+
+
+
+
+
+        }
+
+        static double[] readHex(string filename) {
+            BinaryReader reader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.None));
+            reader.BaseStream.Position = 0x0;     // The offset you are reading the data from
+            double[] data = new double[1000];
+            for (int i = 0; i < 1000; i++)
+            {
+                data[i] = reader.ReadSingle();
+            }       
+            reader.Close();
+
+            return data;
+
+        }
+
+
+        static double[] readWav(string filename, out int rate, out WaveFormat format)
+        {
+            WaveFileReader reader = new WaveFileReader(filename);
+            format = reader.WaveFormat;
+            float[] buffer;
+            double[] data = new double[reader.SampleCount];
+            int  counter = 0;
+            rate =reader.WaveFormat.SampleRate;
+ 
+            while ((buffer = reader.ReadNextSampleFrame()) != null)
+            {
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    data[counter++] = buffer[i];
+
+                }
+            }
+            reader.Close();
+            return data;
+
+        }
+
+        public static void writeWav(string path, WaveFormat format, float[] samples)
+        {
+            using (WaveFileWriter writer = new WaveFileWriter(path, format))
+            {
+                writer.WriteSamples(samples, 0, samples.Length);
+                writer.Flush();
+            }
+        }
+
+        private void btWrite_Click(object sender, EventArgs e)
+        {
+            Series series = chart.Series.FindByName(cbArea.Text);
+
+            double[] y = series.Points.Select(item => item.YValues[0]).ToArray();
+            float[] data = new float[y.Length];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] =(float) y[i];
+
+            }
+            writeWav(tbFile.Text, waveFormat, data);
+
+
+
+
+
         }
     }
 }
