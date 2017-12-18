@@ -25,7 +25,9 @@ namespace Graphics
 
         private static int startCut;
         private static int endCut;
+        private static double hLength;
         private static double dT;
+   
 
         public MainWindow()
         {
@@ -400,6 +402,19 @@ namespace Graphics
                         addParameters(panelTransformParams, new string[] { });
                         break;
                     }
+
+                case "CombFilter":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+
+                            double [] res = Transformations.CombFilter(y, args[0],(int) args[1]);
+                            return res;
+                        } );
+                        addParameters(panelTransformParams, new string[] { "g","M"});
+                        break;
+                    }
                 case "Spikes(F(x),M,Sigma)":
                     {
                         transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
@@ -432,6 +447,61 @@ namespace Graphics
                         addParameters(panelTransformParams, new string[] { "f0", "alpha", "hLeft", "hRight", "hStep" });
                         break;
                     }
+                case "ConvolutionWithPlot":
+                    {
+
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => {
+ 
+
+                            Series series = chart.Series.FindByName(args[0].ToString());
+                            int m = series.Points.Select(item => item.YValues[0]).ToArray().Length;
+                            
+
+                            return y.ToArray();
+                        });
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            Series series = chart.Series.FindByName(args[0].ToString());
+                            double[] h = series.Points.Select(item => item.YValues[0]).ToArray();
+                            double[] res = Transformations.ConvolutionWithPlot(h, y);
+                            
+                            return Transformations.Normalize(res);
+                        });
+                        addParameters(panelTransformParams, new string[] { "Plot number"});
+                        break;
+                    }
+                case "Shroeder":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => {return y.ToArray();});
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
+                            double g = 0.9;
+                            double[] cg = new double[4];
+                            int[] cd = new int[4];
+                            double ag = 0.9;
+                            int[] ad = new int[2];
+                            double k = 0.2;
+                            Random r = new Random();
+
+                            for (int i = 0; i < cg.Length; i++)
+                            {
+                                cg[i] = 0.7;
+                            }
+                            for (int i = 0; i < cd.Length; i++)
+                            {
+                                cd[i]=(int)( 0.05* r.Next(0,y.Length)+1);
+                            }
+                            for (int i = 0; i < ad.Length; i++)
+                            {
+                                ad[i] = (int)(0.05 * r.Next(0, y.Length) + 1);
+                            }
+
+
+                            return Transformations.ShroederFilter(y,cg,cd,ag,ad,k);
+                        });
+                        addParameters(panelTransformParams, new string[] {});
+
+                        break;
+                    }
+
                 case "ConvolutionWithLpf(x,fcut,m,dt)":
                     {
                         transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
@@ -456,7 +526,7 @@ namespace Graphics
                     }
                 case "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray().Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[2]).Take(y.Length).ToArray().Skip((int)args[1]).Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBpf(y, args[0], args[1], args[2],dT)
                                                                                                         .Skip((int)args[1])
                                                                                                         .Take(y.Length)
@@ -469,7 +539,7 @@ namespace Graphics
                     }
                 case "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[2]).Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBsf(y, args[0], args[1], args[2], dT)
                                                                                                         .Skip((int)args[1])
                                                                                                         .Take(y.Length)
@@ -563,6 +633,23 @@ namespace Graphics
                         MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
                         break;
                     }
+                case "CombFilter(x,g,M)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.CombFilter(y,args[0], (int)args[1]));
+                        addParameters(panelTransformParams, new string[] { "g", "M"});
+                        break;
+                    }
+
+                case "UniversalCombFilter(BL,FB,FF,M)":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.UniversalCombFilter(y,args[0], args[1],args[2],(int)args[3]));
+                        addParameters(panelTransformParams, new string[] { "BL", "FB", "FF", "M" });
+                        break;
+                    }
+
+                    
                 case "Multiply":
                     {
                         transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
@@ -727,7 +814,7 @@ namespace Graphics
 
 
 
-            }
+            } 
 
 
 
@@ -801,5 +888,7 @@ namespace Graphics
 
 
         }
+
+
     }
 }

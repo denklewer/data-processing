@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title7 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btWrite = new System.Windows.Forms.Button();
             this.tbFile = new System.Windows.Forms.TextBox();
             this.btnFile = new System.Windows.Forms.Button();
             this.panelTransformParams = new System.Windows.Forms.Panel();
@@ -59,7 +60,6 @@
             this.tbRight = new System.Windows.Forms.TextBox();
             this.tbLeft = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btWrite = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -69,34 +69,34 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Black;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.AxisX.LabelStyle.IsStaggered = true;
-            chartArea2.AxisX.MinorGrid.Enabled = true;
-            chartArea2.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea2.AxisX.MinorTickMark.Enabled = true;
-            chartArea2.AxisY.MinorGrid.Enabled = true;
-            chartArea2.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea2.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea2.AxisY.MinorTickMark.Enabled = true;
-            chartArea2.Name = "1";
-            this.chart.ChartAreas.Add(chartArea2);
+            chartArea7.AxisX.LabelStyle.IsStaggered = true;
+            chartArea7.AxisX.MinorGrid.Enabled = true;
+            chartArea7.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea7.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea7.AxisX.MinorTickMark.Enabled = true;
+            chartArea7.AxisY.MinorGrid.Enabled = true;
+            chartArea7.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea7.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea7.AxisY.MinorTickMark.Enabled = true;
+            chartArea7.Name = "1";
+            this.chart.ChartAreas.Add(chartArea7);
             this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chart.Legends.Add(legend2);
+            legend7.Name = "Legend1";
+            this.chart.Legends.Add(legend7);
             this.chart.Location = new System.Drawing.Point(0, 0);
             this.chart.Name = "chart";
-            series2.ChartArea = "1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series2.Legend = "Legend1";
-            series2.Name = "1";
-            this.chart.Series.Add(series2);
+            series7.ChartArea = "1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series7.Legend = "Legend1";
+            series7.Name = "1";
+            this.chart.Series.Add(series7);
             this.chart.Size = new System.Drawing.Size(735, 678);
             this.chart.TabIndex = 8;
             this.chart.Text = "y=ax+b";
-            title2.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            title2.Name = "Title1";
-            title2.Text = "Graphics";
-            this.chart.Titles.Add(title2);
+            title7.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            title7.Name = "Title1";
+            title7.Text = "Graphics";
+            this.chart.Titles.Add(title7);
             this.chart.MouseEnter += new System.EventHandler(this.chart_MouseEnter);
             this.chart.MouseLeave += new System.EventHandler(this.chart1_MouseLeave);
             // 
@@ -129,6 +129,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(315, 678);
             this.panel1.TabIndex = 9;
+            // 
+            // btWrite
+            // 
+            this.btWrite.Enabled = false;
+            this.btWrite.Location = new System.Drawing.Point(165, 3);
+            this.btWrite.Name = "btWrite";
+            this.btWrite.Size = new System.Drawing.Size(138, 31);
+            this.btWrite.TabIndex = 35;
+            this.btWrite.Text = "Write Wav";
+            this.btWrite.UseVisualStyleBackColor = true;
+            this.btWrite.Click += new System.EventHandler(this.btWrite_Click);
             // 
             // tbFile
             // 
@@ -210,7 +221,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(56, 439);
+            this.label9.Location = new System.Drawing.Point(119, 442);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(184, 17);
             this.label9.TabIndex = 32;
@@ -270,6 +281,7 @@
             this.cbTransform.FormattingEnabled = true;
             this.cbTransform.Items.AddRange(new object[] {
             "Fourier",
+            "Reverb",
             "Spikes(F(x),M,Sigma)",
             "Shift(F(x),shift)",
             "RandomSpikes(x,spikes)",
@@ -288,7 +300,11 @@
             "ConvolutionWithLpf(x,fcut,m,dt)",
             "ConvolutionWithHpf(x,fcut,m,dt)",
             "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)",
-            "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)"});
+            "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)",
+            "CombFilter",
+            "ConvolutionWithPlot",
+            "UniversalCombFilter(BL,FB,FF,M)",
+            "Shroeder"});
             this.cbTransform.Location = new System.Drawing.Point(97, 412);
             this.cbTransform.Name = "cbTransform";
             this.cbTransform.Size = new System.Drawing.Size(209, 24);
@@ -388,17 +404,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // btWrite
-            // 
-            this.btWrite.Enabled = false;
-            this.btWrite.Location = new System.Drawing.Point(165, 3);
-            this.btWrite.Name = "btWrite";
-            this.btWrite.Size = new System.Drawing.Size(138, 31);
-            this.btWrite.TabIndex = 35;
-            this.btWrite.Text = "Write Wav";
-            this.btWrite.UseVisualStyleBackColor = true;
-            this.btWrite.Click += new System.EventHandler(this.btWrite_Click);
             // 
             // MainWindow
             // 

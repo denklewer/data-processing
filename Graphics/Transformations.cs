@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Numerics;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+
 
 namespace Graphics
 {
@@ -34,6 +35,15 @@ namespace Graphics
 
             return res;
         }
+        
+
+
+
+
+   
+
+
+       
 
         public static double[] FurieXTransform(double[] x)
         {
@@ -374,6 +384,119 @@ namespace Graphics
         }
 
 
+        //гребенчатый фильтр
+        public static double[] CombFilter(double[] x,double g, int M)
+        {
+            double[] y = new double [x.Length];
+            /*for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = (1+g*Math.Pow(i,(-M)))*x[i];
+            }*/
+            for (int i = 0; i < M; i++)
+            {
+                y[i] = x[i];
+            }
+            for (int i = M; i < x.Length; i++)
+            {
+                y[i] = x[i] - g * y[i - M];
+
+            }
+    
+            return y;
+        }
+
+
+
+        /// <summary>
+        /// 
+        ///универсальный  фильтр позволяет  реализовать гребенчатый фильтр, фазовый фильтр, delay фильр
+        ///        
+        /// Представляет собой фазовый фильтр с оператором  задержки на M сэмплов. и дополнительным множителем FF.
+        /// FIR Comb - гребенчатый, в котором задержанный сигнал добавляется к входному с каким-то коэфициентом FF.
+        /// IIR Comb - входной сигнал циркулирует в задерживаемой строке, которая потом снова складывается с входным сигналом.
+        /// перед каждым сложением - уменьшение c коэф FB (циклично)
+        /// 
+        /// Allpass - BL - a , FB -a FF 1.
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="BL">blend 1 если гребенчатый , FB(a) если Allpass</param>
+        /// <param name="FF">feedforward g  если FIR, 0 если IIR, 1 если allpass или delay</param>
+        /// <param name="FB">feedbackward g если  IIR  -a если allpass, иначе 0</param>
+        /// <param name="M">задержка</param>
+        /// <returns></returns>
+        public static double[] UniversalCombFilter(double[] x, double BL, double FB, double FF, int M)
+        {
+            /*BL = 0.5;
+            FB = -0.5;
+            FF = 1;
+            M = 10;*/
+
+            double[] y = new double[x.Length];
+            /*for (int i = 0; i < y.Length; i++)
+            {
+                y[i] = (1+g*Math.Pow(i,(-M)))*x[i];
+            }*/
+            double xh;
+            Queue<double> delayLine = new Queue<double>();
+           
+            for (int i = 0; i < M; i++)
+            {
+               
+                delayLine.Enqueue(0.0);
+            }    
+            for (int i = 0; i < x.Length; i++)
+            {
+                xh = x[i] + FB * delayLine.Peek();
+                y[i] = FF * delayLine.Peek() + BL * xh;
+                delayLine.Dequeue();
+                delayLine.Enqueue(xh);
+            }
+            return y;
+        }
+
+
+
+        /// <summary>
+        /// Фильтр шрёдера
+        /// </summary>
+        /// <param name="x">входной сигнал</param>
+        /// <param name="cg">массив потерь для гребенчатых фильтров</param>
+        /// <param name="cd">массив задержек для гребенчатых сильтров</param>
+        /// <param name="ag">массив потерь для фазовых фильтров</param>
+        /// <param name="ad">массив задержек для фазовых фильров</param>
+        /// <param name="k">ослабление для оригинального вектора</param>
+        /// <returns></returns>
+        public static double[] ShroederFilter(double[] x, double[] cg, int[] cd, double ag, int[] ad, double k) {
+            double[][] cbres = new double[cg.Length][];
+            for (int i = 0; i < cg.Length; i++)
+            {
+                cbres[i] = Transformations.UniversalCombFilter(x, 1, cg[i], 0, cd[i]);
+            }
+            double[] combres = new double [cbres[0].Length] ;
+            for (int i = 0; i < combres.Length; i++)
+            {
+                for (int j = 0; j < cbres.Length; j++)
+                {
+                    combres[i] += cbres[j][i];
+                }
+            }
+            double[] res = combres ;
+            for (int i = 0; i < ad.Length; i++)
+            {
+                res = Transformations.UniversalCombFilter(res, ag, -ag, 1, ad[0]);
+            }
+            for (int i = 0; i < x.Length; i++)
+            {
+                res[i] += k * x[i];
+            }
+
+            return Transformations.Normalize(res);
+        }
+
+
+
+
         public static double[] ConwolutionWithLpf(double[] x, double fcut, double m, double dt)
         {
  
@@ -382,6 +505,58 @@ namespace Graphics
             double[] res = Transformations.ConvolutionFunction(h, x);
             return res;
         }
+
+        public static double[] ConvolutionWithPlot(double[] x, double[] h)
+        {
+/*
+            alglib.complex[] f;
+            alglib.complex[] hc;
+            double[] x2;
+            alglib.complex[] res;
+            alglib.fftr1d(x, out f);
+            alglib.fftr1d(h, out hc);
+
+
+
+            alglib.convc1d(f, f.Length, hc, hc.Length, out res);
+
+
+
+            alglib.fftr1dinv(res, out x2);
+            x2 = x2.Take(x.Length).ToArray();
+            double max = 0;
+
+            if (Math.Abs(x2.Max()) > Math.Abs(x2.Min())) {
+                max = Math.Abs(x2.Max());
+            }
+            else {
+                max = Math.Abs(x2.Min());
+            }
+
+
+           for (int i = 0; i < x2.Length; i++)
+           {
+               x2[i] = x2[i] / max;
+
+           }
+
+            // double[] res = Transformations.ConvolutionFunction(h, x);
+            return x2;*/
+
+            return ConvolutionFunction(h, x);
+        }
+
+       public static  double[] Normalize(double[] x) {
+            double min = x.Min();
+            double max = x.Max();
+            for (int i = 0; i < x.Length; i++)
+            {
+                x[i] = (x[i] / (max - min));
+            }
+
+            return x;
+        }
+
 
 
         public static double[] ConwolutionWithHpf(double[] x, double fcut, double m, double dt)
