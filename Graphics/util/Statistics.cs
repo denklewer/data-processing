@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace Graphics
+namespace Graphics.util
 {
    public class Statistics
     {
@@ -222,21 +222,21 @@ namespace Graphics
             for (int i = 0; i < 10; i++) 
             {
                 means[i] = ExpectedValue(arr.Skip(shag * i).Take(shag));
-                meansquares[i] = MeanSquare(arr.Skip(shag * i).Take(shag));
+              //  meansquares[i] = MeanSquare(arr.Skip(shag * i).Take(shag));
                 deviations[i] = StandartDeviation(arr.Skip(shag * i).Take(shag));
             }
             for (int i = 0; i < means.Length; i++)
             {
                 for (int j = 0; j < means.Length; j++)
                 {
-                    if (means[i] / means[j] < 0.9) {
+                    if (means[i] / means[j] < 0.8) {
                         return false;
                     }
-                    if (meansquares[i] / meansquares[j] < 0.9)
+                   /* if (meansquares[i] / meansquares[j] < 0.9)
                     {
                         return false;
-                    }
-                    if (deviations[i] / deviations[j] < 0.9)
+                    }*/
+                    if (deviations[i] / deviations[j] < 0.8)
                     {
                         return false;
                     }

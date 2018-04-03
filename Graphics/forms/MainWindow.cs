@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using Graphics.util;
+using NAudio.Wave;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace Graphics
 {
     public partial class MainWindow : Form
     {
+        
         private Func<Double[], Double> fun = new Func<double[], double>(x => 10);
         private Func<Double[], Double[], Double[]> transformX = new Func<double[], double[], double[]>((x, y) => x);
         private Func<Double[], Double[], Double[]> transformY = new Func<double[], double[], double[]>((x, y) => x);
@@ -35,6 +37,111 @@ namespace Graphics
 
 
             chart.MouseWheel += chData_MouseWheel;
+        }
+
+        public MainWindow(double[] data) {
+            InitializeComponent();
+
+            chart.MouseWheel += chData_MouseWheel;
+            validateSetings();
+
+
+
+            Control.ControlCollection controls = panelFunctionParams.Controls;
+            double[] args = new double[controls.Count / 2 + 1];
+            int i = controls.Count / 2;
+            foreach (Control item in controls)
+            {
+                if (item.GetType() == (typeof(TextBox)))
+                {
+                    args[i] = Double.Parse(item.Text);
+                    i--;
+                }
+
+
+            }
+            string chartAreaNum = cbArea.Text;
+            chart.Series.Remove(chart.Series.FindByName(chartAreaNum));
+
+            Series series = chart.Series.Add(chartAreaNum);
+            functionName = chartAreaNum;
+            if (chart.ChartAreas.FindByName(chartAreaNum) == null)
+            {
+                chart.ChartAreas.Add(chartAreaNum);
+                cbArea.Items.Add(chartAreaNum);
+                validateSetings();
+
+            }
+            series.ChartArea = chartAreaNum;
+            series.ChartType = SeriesChartType.Line;
+            double funValue = 0;
+
+            for (int j = 0; j < data.Length; j++)
+            {
+
+                funValue = data[j];
+                if (!Double.IsInfinity(funValue) && !Double.IsNaN(funValue))
+                    series.Points.AddXY(j, funValue);
+            }
+
+            validateSetings();
+
+        }
+
+        public MainWindow(double[] data1, double[] data2)
+        {
+            InitializeComponent();
+            double[] result = new double[data1.Length];
+            for (int ind = 0; ind < result.Length; ind++)
+            {
+                result[ind] = Transformations.Crosscorrelation(data1, data2, ind);
+            }
+
+
+            chart.MouseWheel += chData_MouseWheel;
+            validateSetings();
+
+
+
+            Control.ControlCollection controls = panelFunctionParams.Controls;
+            double[] args = new double[controls.Count / 2 + 1];
+            int i = controls.Count / 2;
+            foreach (Control item in controls)
+            {
+                if (item.GetType() == (typeof(TextBox)))
+                {
+                    args[i] = Double.Parse(item.Text);
+                    i--;
+                }
+
+
+            }
+            string chartAreaNum = cbArea.Text;
+            chart.Series.Remove(chart.Series.FindByName(chartAreaNum));
+
+            Series series = chart.Series.Add(chartAreaNum);
+            functionName = chartAreaNum;
+            if (chart.ChartAreas.FindByName(chartAreaNum) == null)
+            {
+                chart.ChartAreas.Add(chartAreaNum);
+                cbArea.Items.Add(chartAreaNum);
+                validateSetings();
+
+            }
+            series.ChartArea = chartAreaNum;
+            series.ChartType = SeriesChartType.Line;
+            double funValue = 0;
+
+            for (int j = 0; j < result.Length; j++)
+            {
+
+                funValue = result[j];
+                if (!Double.IsInfinity(funValue) && !Double.IsNaN(funValue))
+                    series.Points.AddXY(j, funValue);
+            }
+
+            validateSetings();
+
         }
 
         public void validateSetings() {
@@ -59,7 +166,8 @@ namespace Graphics
                 item.AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
                 item.AxisY.MinorGrid.LineColor = Color.Gray;
                 item.AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-
+                
+                
                
 
 
@@ -402,6 +510,23 @@ namespace Graphics
                         addParameters(panelTransformParams, new string[] { });
                         break;
                     }
+                case "ForwardFurie":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ForwardFurie(y).Select(x => x.Imaginary + x.Real).ToArray());
+                        addParameters(panelTransformParams, new string[] { });
+                        break;
+                    }
+
+                case "ReverseFurie":
+                    {
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ReverseFurie(y).Select(x => x.Imaginary + x.Real).ToArray());
+                        addParameters(panelTransformParams, new string[] { });
+                        break;
+                    }
+
+
 
                 case "CombFilter":
                     {
@@ -504,7 +629,7 @@ namespace Graphics
 
                 case "ConvolutionWithLpf(x,fcut,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => {
                             int m =(int) args[1];
                             return Transformations.ConwolutionWithLpf(y, args[0], m, dT)
@@ -517,7 +642,7 @@ namespace Graphics
                     }
                 case "ConvolutionWithHpf(x,fcut,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithHpf(y, args[0], args[1], dT).Skip((int)args[1]).Take(y.Length).ToArray());
                         double tmp = 0;
 
@@ -526,9 +651,9 @@ namespace Graphics
                     }
                 case "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[2]).Take(y.Length).ToArray().Skip((int)args[1]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBpf(y, args[0], args[1], args[2],dT)
-                                                                                                        .Skip((int)args[1])
+                                                                                                        .Skip((int)args[2])
                                                                                                         .Take(y.Length)
                                                                                                         .ToArray());
                         double tmp = 0;
@@ -539,9 +664,9 @@ namespace Graphics
                     }
                 case "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)":
                     {
-                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Skip((int)args[2]).Take(y.Length).ToArray());
+                        transformX = new Func<Double[], Double[], Double[]>((y, args) => y.Take(y.Length).ToArray());
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBsf(y, args[0], args[1], args[2], dT)
-                                                                                                        .Skip((int)args[1])
+                                                                                                        .Skip((int)args[2])
                                                                                                         .Take(y.Length)
                                                                                                         .ToArray());
                         double tmp = 0;
@@ -889,6 +1014,9 @@ namespace Graphics
 
         }
 
+        private void tbFile_TextChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Graphics.util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -93,7 +94,7 @@ namespace Graphics
             {
                 x[i] = i ;
             }
-            DrawAutoCorrelation(x, AutoChart, functionName);
+            DrawAutoCorrelation(x, AutoChart, chart.Series.FindByName(functionName).Points, functionName);
 
         }
 
@@ -142,11 +143,10 @@ namespace Graphics
             }
         }
 
-        private void DrawAutoCorrelation(int[] x, Chart chart, string functionName)
+        private void DrawAutoCorrelation(int[] x, Chart chart, DataPointCollection arr, string functionName)
         {
             /*double a = Double.Parse(tbA3.Text);
             double b = Double.Parse(tbB3.Text);*/
-
             chart.Series.Clear();
             Series series = chart.Series.Add(functionName);
             series.ChartType = SeriesChartType.Spline;
@@ -155,7 +155,7 @@ namespace Graphics
 
             for (int i = 0; i < x.Length; i++)
             {
-                    series.Points.AddXY(x[i], Statistics.Autocorrelation(series.Points,x[i]));
+                    series.Points.AddXY(x[i], Statistics.Autocorrelation(arr,x[i]));
             }
         }
 
@@ -193,6 +193,11 @@ namespace Graphics
         }
 
         private void lbMeanSquare_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chartAutoCorrelation_Click(object sender, EventArgs e)
         {
 
         }

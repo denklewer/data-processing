@@ -205,6 +205,7 @@
             this.chartAutoCorrelation.Size = new System.Drawing.Size(479, 139);
             this.chartAutoCorrelation.TabIndex = 2;
             this.chartAutoCorrelation.Text = "chart1";
+            this.chartAutoCorrelation.Click += new System.EventHandler(this.chartAutoCorrelation_Click);
             // 
             // label1221
             // 

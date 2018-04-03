@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title7 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btWrite = new System.Windows.Forms.Button();
@@ -69,34 +69,34 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Black;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea7.AxisX.LabelStyle.IsStaggered = true;
-            chartArea7.AxisX.MinorGrid.Enabled = true;
-            chartArea7.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea7.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea7.AxisX.MinorTickMark.Enabled = true;
-            chartArea7.AxisY.MinorGrid.Enabled = true;
-            chartArea7.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea7.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea7.AxisY.MinorTickMark.Enabled = true;
-            chartArea7.Name = "1";
-            this.chart.ChartAreas.Add(chartArea7);
+            chartArea1.AxisX.LabelStyle.IsStaggered = true;
+            chartArea1.AxisX.MinorGrid.Enabled = true;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisX.MinorTickMark.Enabled = true;
+            chartArea1.AxisY.MinorGrid.Enabled = true;
+            chartArea1.AxisY.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisY.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisY.MinorTickMark.Enabled = true;
+            chartArea1.Name = "1";
+            this.chart.ChartAreas.Add(chartArea1);
             this.chart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend7.Name = "Legend1";
-            this.chart.Legends.Add(legend7);
+            legend1.Name = "Legend1";
+            this.chart.Legends.Add(legend1);
             this.chart.Location = new System.Drawing.Point(0, 0);
             this.chart.Name = "chart";
-            series7.ChartArea = "1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series7.Legend = "Legend1";
-            series7.Name = "1";
-            this.chart.Series.Add(series7);
+            series1.ChartArea = "1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "1";
+            this.chart.Series.Add(series1);
             this.chart.Size = new System.Drawing.Size(735, 678);
             this.chart.TabIndex = 8;
             this.chart.Text = "y=ax+b";
-            title7.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            title7.Name = "Title1";
-            title7.Text = "Graphics";
-            this.chart.Titles.Add(title7);
+            title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            title1.Name = "Title1";
+            title1.Text = "Graphics";
+            this.chart.Titles.Add(title1);
             this.chart.MouseEnter += new System.EventHandler(this.chart_MouseEnter);
             this.chart.MouseLeave += new System.EventHandler(this.chart1_MouseLeave);
             // 
@@ -132,7 +132,6 @@
             // 
             // btWrite
             // 
-            this.btWrite.Enabled = false;
             this.btWrite.Location = new System.Drawing.Point(165, 3);
             this.btWrite.Name = "btWrite";
             this.btWrite.Size = new System.Drawing.Size(138, 31);
@@ -148,6 +147,7 @@
             this.tbFile.Size = new System.Drawing.Size(138, 22);
             this.tbFile.TabIndex = 34;
             this.tbFile.Text = "D:\\php.dat";
+            this.tbFile.TextChanged += new System.EventHandler(this.tbFile_TextChanged);
             // 
             // btnFile
             // 
@@ -304,7 +304,9 @@
             "CombFilter",
             "ConvolutionWithPlot",
             "UniversalCombFilter(BL,FB,FF,M)",
-            "Shroeder"});
+            "Shroeder",
+            "ForwardFurie",
+            "ReverseFurie"});
             this.cbTransform.Location = new System.Drawing.Point(97, 412);
             this.cbTransform.Name = "cbTransform";
             this.cbTransform.Size = new System.Drawing.Size(209, 24);
