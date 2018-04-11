@@ -992,7 +992,7 @@ namespace Graphics.util
 
             for (int i = 0; i < f.Length; i++)
             {
-                
+
                 for (int j = 0; j < f[i].Length; j++)
                 {
 
@@ -1005,9 +1005,8 @@ namespace Graphics.util
 
         public static double[] Derivative(double[] f)
         {
-            //  f = readHex2D(filename, f.Length, f[0].Length);
-            double[]result = new double[f.Length];
-            for (int i = 0; i < result.Length-1; i++)
+            double[] result = new double[f.Length];
+            for (int i = 0; i < result.Length - 1; i++)
             {
                 result[i] = f[i + 1] - f[i];
 
@@ -1023,17 +1022,17 @@ namespace Graphics.util
             double[][] result = new double[f.Length][];
             double[] tmp;
 
-          
+
 
             for (int i = 0; i < f.Length; i++)
             {
                 tmp = Derivative(f[i]);
                 double dT = 1.0 / f[i].Length;
-              tmp= Transformations.ConwolutionWithBsf(f[i], freq1, freq2, m, dT).Skip((int)m).Take(f[i].Length).ToArray();
+                tmp = Transformations.ConwolutionWithBsf(f[i], freq1, freq2, m, dT).Skip((int)m).Take(f[i].Length).ToArray();
                 result[i] = tmp;
 
 
-        }
+            }
             return result;
         }
 
@@ -1044,10 +1043,10 @@ namespace Graphics.util
 
             for (int i = 0; i < f.Length; i++)
             {
-              result[i]= Autocorrelation(f, i);
+                result[i] = Autocorrelation(f, i);
             }
 
-           // result = Transformations.ForwardFurie(result).Select(x => x.Imaginary + x.Real).ToArray();
+            // result = Transformations.ForwardFurie(result).Select(x => x.Imaginary + x.Real).ToArray();
 
             new MainWindow(result).Show();
 
@@ -1056,7 +1055,7 @@ namespace Graphics.util
 
 
 
-        public static double[][] CheckGridWithCross(double[][] f, int row1 , int row2)
+        public static double[][] CheckGridWithCross(double[][] f, int row1, int row2)
         {
 
             // result = Transformations.ForwardFurie(result).Select(x => x.Imaginary + x.Real).ToArray();
@@ -1066,7 +1065,8 @@ namespace Graphics.util
             return f;
         }
 
-        public static double[][] ThresholdFun(double[][] f, double min_threshold, double max_threshold, int depth = 8) {     
+        public static double[][] ThresholdFun(double[][] f, double min_threshold, double max_threshold, int depth = 8)
+        {
 
             //double[] mass = f.SelectMany(x => x).ToArray();
 
@@ -1076,14 +1076,15 @@ namespace Graphics.util
             {
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                    
-                    int value =(int) f[i][j];
+
+                    int value = (int)f[i][j];
                     if (value < min_threshold)
                     {
                         value = 0;
                         f[i][j] = value;
                     }
-                    else if (value >= max_threshold) {
+                    else if (value >= max_threshold)
+                    {
                         value = (1 << depth) - 1;
                         f[i][j] = value;
                     }
@@ -1102,14 +1103,15 @@ namespace Graphics.util
                 result[i] = new double[arr1[i].Length];
                 for (int j = 0; j < arr1[i].Length; j++)
                 {
-                    int x =(int) arr1[i][j] - (int)arr2[i][j];
-                    if (x < 0) {
+                    int x = (int)arr1[i][j] - (int)arr2[i][j];
+                    if (x < 0)
+                    {
                         x = 0;
 
                     }
                     result[i][j] = x;
                 }
-                
+
 
             }
 
@@ -1125,13 +1127,13 @@ namespace Graphics.util
         public static double[][] LPF(double[][] f, double fcut, double m)
         {
             double[][] result = new double[f.Length][];
-            
+
             for (int i = 0; i < f.Length; i++)
             {
                 result[i] = new double[f[i].Length];
-   
-                    result[i] = Transformations.ConwolutionWithLpf(f[i], fcut,m, 1).Skip((int)m).Take(f[i].Length).ToArray();
-             
+
+                result[i] = Transformations.ConwolutionWithLpf(f[i], fcut, m, 1).Skip((int)m).Take(f[i].Length).ToArray();
+
 
             }
 
@@ -1158,14 +1160,16 @@ namespace Graphics.util
 
         }
 
-        public static double Maximum(double[][] f) {
+        public static double Maximum(double[][] f)
+        {
             double max = int.MinValue;
             double tmp;
 
             for (int i = 0; i < f.Length; i++)
             {
                 tmp = f[i].Max();
-                if (tmp > max) {
+                if (tmp > max)
+                {
                     max = tmp;
                 }
 
@@ -1173,7 +1177,7 @@ namespace Graphics.util
             }
             return max;
 
-           
+
         }
         public static double[][] ConturLPF(double[][] f, double thresshold, double fcut, double m)
         {
@@ -1241,11 +1245,13 @@ namespace Graphics.util
 
 
             Complex[] H = ForwardFurie(complementedH);
-           
-        
-            f = f.Select(row => ForwardFurie(row).Select((x, index) => {
+
+
+            f = f.Select(row => ForwardFurie(row).Select((x, index) =>
+            {
                 Complex rez = x * Complex.Conjugate(H[index]) / (Math.Pow(Complex.Abs(H[index]), 2) + Math.Pow(regularization, 2));
-                return rez;})
+                return rez;
+            })
                                                  .Select(x => x.Imaginary + x.Real)
                                                  .ToArray())
                  .Select(row => ReverseFurie(row).Select(x => x.Real + x.Imaginary)
@@ -1268,17 +1274,17 @@ namespace Graphics.util
                 {
                     int maxMi = (int)mask.Length / 2;
                     int maxMj = (int)mask[0].Length / 2;
-                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? mask.Length : i+ maxMi+1)
-                        .Select(x=>x.Skip(j-maxMj).Take(j>=maxMj? mask[0].Length : j+ maxMj+1).ToArray())
+                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? mask.Length : i + maxMi + 1)
+                        .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? mask[0].Length : j + maxMj + 1).ToArray())
                         .ToArray();
 
                     double[][] maskRange = mask.Skip(i < maxMi ? maxMi - i : 0)
-                        .Take(i + maxMi >= f.Length ? f.Length - i+1 : mask.Length)
-                        .Select(x => x.Skip(j  < maxMj ? maxMj - j : 0)
-                                      .Take(j + maxMj >= f[i].Length ? f[i].Length - j +1: mask[0].Length)
+                        .Take(i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length)
+                        .Select(x => x.Skip(j < maxMj ? maxMj - j : 0)
+                                      .Take(j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length)
                                       .ToArray())
                         .ToArray();
-                   
+
                     int counter = 0;
                     double sum = 0;
 
@@ -1287,7 +1293,7 @@ namespace Graphics.util
                     {
                         for (int mj = 0; mj < maskRange[mi].Length; mj++)
                         {
-                            sum += range[mi][mj]*maskRange[mi][mj];
+                            sum += range[mi][mj] * maskRange[mi][mj];
                             counter++;
                         }
                     }
@@ -1299,14 +1305,15 @@ namespace Graphics.util
                     Console.WriteLine("Summed " + counter + "times");
                     result[i][j] = sum;
                 }
-                
+
             }
             return result;
         }
 
-        public static double[][] Gradient(double[][] f) {
+        public static double[][] Gradient(double[][] f)
+        {
 
-            double[][] horMask = new double[3][] { new double[3] {-1, -2, -1}, new double[3] {0, 0,0 }, new double [3]{1,2,1 } };
+            double[][] horMask = new double[3][] { new double[3] { -1, -2, -1 }, new double[3] { 0, 0, 0 }, new double[3] { 1, 2, 1 } };
             double[][] vertMask = new double[3][] { new double[3] { -1, 0, 1 }, new double[3] { -2, 0, 2 }, new double[3] { -1, 0, 1 } };
             double[][] diagMask = new double[3][] { new double[3] { 0, 1, 1 }, new double[3] { -1, 0, 1 }, new double[3] { -1, -1, 0 } };
             double[][] diagMaskReversed = new double[3][] { new double[3] { 1, 1, 0 }, new double[3] { 1, 0, -1 }, new double[3] { 0, -1, -1 } };
@@ -1324,7 +1331,7 @@ namespace Graphics.util
             {
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                    tmp = Horizontal[i][j] + Vertical[i][j] + Diagonal[i][j]+ DiagonalRev[i][j];
+                    tmp = Horizontal[i][j] + Vertical[i][j] + Diagonal[i][j] + DiagonalRev[i][j];
                     if (tmp < 0)
                     {
                         tmp = 0;
@@ -1339,7 +1346,78 @@ namespace Graphics.util
 
         }
 
+        public static double[][] Laplassian(double[][] f)
+        {
 
+            double[][] horMask = new double[3][] { new double[3] { -1, -1, -1 }, new double[3] { -1, 8, -1 }, new double[3] { -1, -1, -1 } };
+
+            double[][] Horizontal = ApplyMask(f, horMask);
+
+
+
+
+            double tmp;
+            for (int i = 0; i < f.Length; i++)
+            {
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    tmp = Horizontal[i][j];
+                    if (tmp < 0)
+                    {
+                        tmp = 0;
+                    }
+
+                    f[i][j] = tmp;
+
+                }
+
+            }
+            return f;
+
+        }
+
+        public static double[][] ApplyMaskErrosion(double[][] f, double[][] mask, double threshold)
+        {
+            double[][] result = new double[f.Length][];
+            int maxMi = (int)mask.Length / 2;
+            int maxMj = (int)mask[0].Length / 2;
+            for (int i = maxMi; i < f.Length - maxMi; i++)
+            {
+                result[i] = new double[f[i].Length];
+                //++
+                for (int j = maxMj; j < f[i].Length - maxMj; j++)
+                {
+
+                    double[][] range = f.Skip(i - maxMi).Take(mask.Length)
+                        .Select(x => x.Skip(j - maxMj).Take(mask[0].Length).ToArray())
+                        .ToArray();
+
+                    bool needToDelete = false;
+                    double value = 0;
+                    if (range[maxMi][maxMj] < threshold)
+                    {
+                        needToDelete = true;
+                        value = range[maxMi][maxMj];
+                    }
+                    if (needToDelete)
+                    {
+                        for (int mi = 0; mi < range.Length; mi++)
+                        {
+                            for (int mj = 0; mj < range[mi].Length; mj++)
+                            {
+                                range[mi][mj] = value;
+                            }
+                        }
+                    }
+
+
+
+
+                }
+
+            }
+            return result;
+        }
 
 
 

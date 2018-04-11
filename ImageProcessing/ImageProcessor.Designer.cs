@@ -325,7 +325,8 @@
             "Threshold",
             "LPF_Whole",
             "HPF_Whole",
-            "Minus"});
+            "Minus",
+            "Laplassian"});
             this.cbTransform.Location = new System.Drawing.Point(97, 382);
             this.cbTransform.Name = "cbTransform";
             this.cbTransform.Size = new System.Drawing.Size(209, 24);

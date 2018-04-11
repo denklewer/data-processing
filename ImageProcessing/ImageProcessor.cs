@@ -650,7 +650,15 @@ namespace ImageProcessing
                         break;
 
                     }
+                case "Laplassian":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Laplassian(y));
 
+                        addParameters(panelTransformParams, new string[] { });
+                        break;
+
+                    }
 
 
 
