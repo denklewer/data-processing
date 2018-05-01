@@ -659,6 +659,61 @@ namespace ImageProcessing
                         break;
 
                     }
+                case "Erosion":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.ApplyMaskErosion(y, (int)args[0], args[1]));
+
+                        addParameters(panelTransformParams, new string[] {"mask width" , "threshold" });
+                        break;
+
+                    }
+                case "Dilation":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.ApplyMaskDilatation(y, (int)args[0], args[1]));
+
+                        addParameters(panelTransformParams, new string[] { "mask width", "threshold" });
+                        break;
+
+                    }
+                case "AddRandNoize":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.ApplyRandNoize(y, args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "power"});
+                        break;
+
+                    }
+                case "AddImpulseNoize":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.ApplyNoizeSaltAndPepper(y, args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "power" });
+                        break;
+
+                    }
+                case "AvgFilter":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.AvgFilter(y, (int)args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "mask width" });
+                        break;
+
+                    }
+                case "MedianFilter":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.MedianFilter(y, (int)args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "mask width" });
+                        break;
+
+                    }
+
 
 
 
@@ -684,177 +739,6 @@ namespace ImageProcessing
                          addParameters(panelTransformParams, new string[] { "Plot number" });
                          break;
                      }*/
-                case "Shroeder":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
-                            double g = 0.9;
-                            double[] cg = new double[4];
-                            int[] cd = new int[4];
-                            double ag = 0.9;
-                            int[] ad = new int[2];
-                            double k = 0.2;
-                            Random r = new Random();
-
-                            for (int i = 0; i < cg.Length; i++)
-                            {
-                                cg[i] = 0.7;
-                            }
-                            for (int i = 0; i < cd.Length; i++)
-                            {
-                                cd[i] = (int)(0.05 * r.Next(0, y.Length) + 1);
-                            }
-                            for (int i = 0; i < ad.Length; i++)
-                            {
-                                ad[i] = (int)(0.05 * r.Next(0, y.Length) + 1);
-                            }
-
-
-                            return Transformations.ShroederFilter(y, cg, cd, ag, ad, k);
-                        });
-                        addParameters(panelTransformParams, new string[] { });
-
-                        break;
-                    }
-
-                case "ConvolutionWithLpf(x,fcut,m,dt)":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
-                            int m = (int)args[1];
-                            return Transformations.ConwolutionWithLpf(y, args[0], m, dT)
-                              .Skip(m).Take(y.Length).ToArray();
-                        });
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "fcut", "m" });
-                        break;
-                    }
-                case "ConvolutionWithHpf(x,fcut,m,dt)":
-                    {
-                       
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithHpf(y, args[0], args[1], dT).Skip((int)args[1]).Take(y.Length).ToArray());
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "fcut", "m" });
-                        break;
-                    }
-                case "ConvolutionWithBpf(x,fcut1,fcut2,m,dt)":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBpf(y, args[0], args[1], args[2], dT)
-                                                                                                        .Skip((int)args[2])
-                                                                                                        .Take(y.Length)
-                                                                                                        .ToArray());
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m" });
-
-                        break;
-                    }
-                case "ConvolutionWithBsf(x,fcut1,fcut2,m,dt)":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.ConwolutionWithBsf(y, args[0], args[1], args[2], dT)
-                                                                                                        .Skip((int)args[2])
-                                                                                                        .Take(y.Length)
-                                                                                                        .ToArray());
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m" });
-
-                        break;
-                    }
-                case "AddRandom":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
-                            for (int i = 0; i < args[1]; i++)
-                            {
-                                y = Transformations.AddRandom(y, args[0]);
-                            }
-
-                            return y;
-                        });
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "A", "M" });
-                        break;
-                    }
-                case "AntiRandom":
-                    {
-                        double left = Double.Parse(tbWidth.Text);
-                        double right = Double.Parse(tbHeight.Text);
-                        double step = Double.Parse(tbStep.Text);
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiRandomFunction(left, right, step, y, args[0], args[1], args[2]));
-                        addParameters(panelTransformParams, new string[] { "A", "F", "CanalsCount" });
-                        break;
-                    }
-                case "AntiShift":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiShifFunction(y));
-                        addParameters(panelTransformParams, new string[] { });
-                        break;
-                    }
-                case "AntiSpike":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.AntiSpikeFunction(y));
-                        addParameters(panelTransformParams, new string[] { });
-                        break;
-                    }
-                case "AntiTrend":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => {
-
-                            double[] newY = Transformations.AvgSlidingWindow(y, (int)args[0]);
-                            return y;
-                        });
-                        double tmp = 0;
-
-                        addParameters(panelTransformParams, new string[] { "width" });
-                        break;
-                    }
-                case "LPW":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Lpf(args[0], (int)args[1], args[2]));
-                        addParameters(panelTransformParams, new string[] { "fcut", "m", "dt" });
-                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
-                        break;
-                    }
-                case "BPF":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Bpf(args[0], args[1], (int)args[2], args[3]));
-                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m", "dt" });
-                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
-                        break;
-                    }
-                case "BSF":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Bsf(args[0], args[1], (int)args[2], args[3]));
-                        addParameters(panelTransformParams, new string[] { "fcut1", "fcut2", "m", "dt" });
-                        MessageBox.Show("Преобразование фурье умножьте на 2*m+1");
-                        break;
-                    }
-                case "CombFilter(x,g,M)":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.CombFilter(y, args[0], (int)args[1]));
-                        addParameters(panelTransformParams, new string[] { "g", "M" });
-                        break;
-                    }
-
-                case "UniversalCombFilter(BL,FB,FF,M)":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.UniversalCombFilter(y, args[0], args[1], args[2], (int)args[3]));
-                        addParameters(panelTransformParams, new string[] { "BL", "FB", "FF", "M" });
-                        break;
-                    }
-
-
-                case "Multiply":
-                    {
-                        transformY = new Func<Double[], Double[], Double[]>((y, args) => Transformations.Multiply(y, args[0]));
-                        addParameters(panelTransformParams, new string[] { "2*m+1" });
-
-                        break;
-                    }
-
-
-
                 default:
                     {
                         break;

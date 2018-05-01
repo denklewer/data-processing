@@ -1069,7 +1069,7 @@ namespace Graphics.util
         {
 
             //double[] mass = f.SelectMany(x => x).ToArray();
-
+            
 
 
             for (int i = 0; i < f.Length; i++)
@@ -1179,6 +1179,25 @@ namespace Graphics.util
 
 
         }
+        public static double Minimum(double[][] f)
+        {
+            double max = int.MaxValue;
+            double tmp;
+
+            for (int i = 0; i < f.Length; i++)
+            {
+                tmp = f[i].Max();
+                if (tmp < max)
+                {
+                    max = tmp;
+                }
+
+
+            }
+            return max;
+
+
+        }
         public static double[][] ConturLPF(double[][] f, double thresshold, double fcut, double m)
         {
 
@@ -1260,11 +1279,95 @@ namespace Graphics.util
 
             return f;
         }
+        public static int EnsureValueIsPositive(int val) {
+            if (val < 0) {
+                return 0;
+            }
+            return val;
+        }
 
-
-
+        /// <summary>
+        ///  Applies mask to picture by summing each element of mask size range with coefficients from mask.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="mask"></param>
+        /// <returns></returns>
         public static double[][] ApplyMask(double[][] f, double[][] mask)
         {
+            double[][] result = new double[f.Length][];
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];              
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    int maxMi = (int)mask.Length / 2;
+                    int maxMj = (int)mask[0].Length / 2;
+
+                    //New fast version. values appeared from the commented code bellow ( aguments of skip and take when calculating submatrixes
+                    int startiF = i - maxMi;
+                    int endiF = startiF + (i >= maxMi ? mask.Length : i + maxMi + 1);
+                    int startjF = j - maxMj;
+                    int endjF = startjF + (j >= maxMj ? mask[0].Length : j + maxMj + 1);
+
+                    int startiM = i < maxMi ? maxMi - i : 0;
+                    int endiM = startiM + i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length;
+                    int startjM = j < maxMj ? maxMj - j : 0;
+                    int endjM = startjM + j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length;
+                    startiF = EnsureValueIsPositive(startiF);
+                    startjF = EnsureValueIsPositive(startjF);
+                    startjM = EnsureValueIsPositive(startjM);             
+                    startiM = EnsureValueIsPositive(startiM);
+                    //!!!!!!!!!!!!!!!!!!! Warning do not remove!!!!!!!!!!!!!!!!!!!!!!!
+                    //!!!! Previous versioin of code : for demonstation of variable values above!!!!!!
+                    /*  double[][] range = f.Skip(i - maxMi)
+                     *                      .Take(i >= maxMi ? mask.Length : i + maxMi + 1)
+                     *                      .Select(x => x.Skip(j - maxMj)
+                     *                                    .Take(j >= maxMj ? mask[0].Length : j + maxMj + 1)
+                     *                                    .ToArray())
+                     *                                    .ToArray();
+                     *                                    
+                     *  double[][] maskRange = mask.Skip(i < maxMi ? maxMi - i : 0)                     
+                     *                             .Take(i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length)
+                     *                             .Select(x => x.Skip(j < maxMj ? maxMj - j : 0)
+                     *                                           .Take(j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length)
+                     *                                           .ToArray())
+                     *                             .ToArray();*
+                     *  for (int mi = 0; mi < maskRange.Length; mi++)
+                     *  {
+                     *      for (int mj = 0; mj < maskRange[mi].Length; mj++)
+                     *      {
+                     *          sum += range[mi][mj] * maskRange[mi][mj];
+                     *      }
+                     *  }
+                     */
+                     //!!!!!!!!!!!!!!!!!!! end of demo code!!!!!!!!!!!!!!!!!!!!!!!
+
+                    double sum = 0;
+
+                    int ind1=0;
+                    int ind2=0;
+
+                    for (int mi = startiM; mi < endiM; mi++)
+                    {
+                        for (int mj = startjM; mj < endjM; mj++) {
+                            sum += f[startiF+ind1][startjF + ind2] * mask[mi][mj];
+                            ind2++;
+                        }
+                        ind2 = 0;
+                        ind1++;
+                    }
+                    result[i][j] = sum;
+                }
+            }
+            return result;
+        }
+
+
+
+
+        public static double[][] AvgFilter(double[][] f,int  maskWidth)
+        {
+
             double[][] result = new double[f.Length][];
             for (int i = 0; i < f.Length; i++)
             {
@@ -1272,38 +1375,41 @@ namespace Graphics.util
                 //++
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                    int maxMi = (int)mask.Length / 2;
-                    int maxMj = (int)mask[0].Length / 2;
-                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? mask.Length : i + maxMi + 1)
-                        .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? mask[0].Length : j + maxMj + 1).ToArray())
+                    int maxMi = (int)maskWidth / 2;
+                    int maxMj = (int)maskWidth / 2;
+                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? maskWidth : i + maxMi + 1)
+                        .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? maskWidth : j + maxMj + 1).ToArray())
                         .ToArray();
 
-                    double[][] maskRange = mask.Skip(i < maxMi ? maxMi - i : 0)
-                        .Take(i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length)
-                        .Select(x => x.Skip(j < maxMj ? maxMj - j : 0)
-                                      .Take(j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length)
-                                      .ToArray())
+                   double avg = range.SelectMany(x => x).Average();
+
+                    result[i][j] = avg;
+
+                }
+
+            }
+            return result;
+        }
+
+        public static double[][] MedianFilter(double[][] f, int maskWidth)
+        {
+
+            double[][] result = new double[f.Length][];
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                //++
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    int maxMi = (int)maskWidth / 2;
+                    int maxMj = (int)maskWidth / 2;
+                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? maskWidth : i + maxMi + 1)
+                        .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? maskWidth : j + maxMj + 1).ToArray())
                         .ToArray();
 
-                    int counter = 0;
-                    double sum = 0;
+                    double[] values = range.SelectMany(x => x).OrderBy(x=>x).ToArray();
+                    result[i][j] = values[values.Length/2];
 
-
-                    for (int mi = 0; mi < maskRange.Length; mi++)
-                    {
-                        for (int mj = 0; mj < maskRange[mi].Length; mj++)
-                        {
-                            sum += range[mi][mj] * maskRange[mi][mj];
-                            counter++;
-                        }
-                    }
-
-
-
-
-
-                    Console.WriteLine("Summed " + counter + "times");
-                    result[i][j] = sum;
                 }
 
             }
@@ -1353,9 +1459,6 @@ namespace Graphics.util
 
             double[][] Horizontal = ApplyMask(f, horMask);
 
-
-
-
             double tmp;
             for (int i = 0; i < f.Length; i++)
             {
@@ -1376,45 +1479,97 @@ namespace Graphics.util
 
         }
 
-        public static double[][] ApplyMaskErrosion(double[][] f, double[][] mask, double threshold)
+
+
+        public static double[][] ApplyMaskErosion(double[][] f,int maskWidth, double threshold)
         {
             double[][] result = new double[f.Length][];
-            int maxMi = (int)mask.Length / 2;
-            int maxMj = (int)mask[0].Length / 2;
-            for (int i = maxMi; i < f.Length - maxMi; i++)
+            int maxMi = (int)maskWidth / 2;
+            int maxMj = (int)maskWidth / 2;
+            for (int i = 0; i < f.Length; i++)
             {
                 result[i] = new double[f[i].Length];
                 //++
-                for (int j = maxMj; j < f[i].Length - maxMj; j++)
+                for (int j = 0; j < f[i].Length; j++)
                 {
-
-                    double[][] range = f.Skip(i - maxMi).Take(mask.Length)
-                        .Select(x => x.Skip(j - maxMj).Take(mask[0].Length).ToArray())
-                        .ToArray();
-
-                    bool needToDelete = false;
-                    double value = 0;
-                    if (range[maxMi][maxMj] < threshold)
+                        double value = f[i][j];
+                    if (i >= maxMi && i < f.Length - maxMi && j>= maxMj && j< f[i].Length-maxMj)
                     {
-                        needToDelete = true;
-                        value = range[maxMi][maxMj];
-                    }
-                    if (needToDelete)
-                    {
+                        double[][] range = f.Skip(i - maxMi).Take(maskWidth)
+                            .Select(x => x.Skip(j - maxMj).Take(maskWidth).ToArray())
+                            .ToArray();
+                        bool needToDelete = false;
+
+                        
                         for (int mi = 0; mi < range.Length; mi++)
                         {
                             for (int mj = 0; mj < range[mi].Length; mj++)
                             {
-                                range[mi][mj] = value;
+                                if (range[mi][mj] < threshold)
+                                {
+                                    needToDelete = true;
+                                    
+                                }
                             }
                         }
+
+                        if (needToDelete)
+                        {
+                            double min = Minimum(range);
+
+                            value = min;
+                        }
                     }
-
-
-
-
+                    result[i][j] = value;
                 }
+            }
+            return result;
+        }
 
+        public static double[][] ApplyMaskDilatation(double[][] f, int maskWidth, double threshold)
+        {
+            double[][] result = new double[f.Length][];
+            int maxMi = (int)maskWidth / 2;
+            int maxMj = (int)maskWidth / 2;
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                //++
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    double value = f[i][j];
+                    if (i >= maxMi && i < f.Length - maxMi && j >= maxMj && j < f[i].Length - maxMj)
+                    {
+                        double[][] range = f.Skip(i - maxMi).Take(maskWidth)
+                            .Select(x => x.Skip(j - maxMj).Take(maskWidth).ToArray())
+                            .ToArray();
+
+
+
+
+                        bool needToAdd = false;
+
+
+                        for (int mi = 0; mi < range.Length; mi++)
+                        {
+                            for (int mj = 0; mj < range[mi].Length; mj++)
+                            {
+                                if (range[mi][mj] > threshold)
+                                {
+                                    needToAdd = true;
+                                }
+                            }
+                        }
+
+                        if (needToAdd)
+                        {
+                            double max = Maximum(range);
+
+                            value = max;
+                        }
+                    }
+                    result[i][j] = value;
+                }
             }
             return result;
         }
@@ -1424,6 +1579,101 @@ namespace Graphics.util
 
 
 
+
+        public static double[][] ApplyRandNoize(double[][] f, double power) {
+            Random rnd = new Random(f.Length);
+            double[][] result = new double[f.Length][];
+            double rndValue;
+
+            int min =(int) Minimum(f);
+    
+   
+            int max = (int) Maximum(f);
+
+            if (max - min < 128)
+            {
+                min = 0;
+                max = 255;
+            }
+
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                     rndValue = rnd.NextDouble();
+
+
+                    if (rndValue < power)
+                    {
+                        //TODO: Min and MAX?
+                        result[i][j] = rnd.Next(0, 255);
+                    }
+                    else {
+                        result[i][j] = f[i][j];
+                    }
+
+                }
+
+            }
+            return result;
+
+        }
+
+        public static double[][] ApplyNoizeSaltAndPepper(double[][] f, double power)
+        {
+            Random rnd = new Random(f.Length);
+            double[][] result = new double[f.Length][];
+            double rndValue;
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    
+                    rndValue = rnd.NextDouble();
+
+
+                    if (rndValue < power)
+                    {
+                        //TODO: Min and MAX?   
+                        result[i][j] = Math.Round(rnd.NextDouble())* 255;
+                    }
+                    else
+                    {
+                        result[i][j] = f[i][j];
+                    }
+
+                }
+
+            }
+            return result;
+
+        }
+        
+        public static double[][] ApplyMaskedFunction(double[][] f, int maskWidth, Func<double[][], double> fromRangeFunction)
+        {
+            double[][] result = new double[f.Length][];
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                //++
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    int maxMi = (int)maskWidth / 2;
+                    int maxMj = (int)maskWidth / 2;
+                    double[][] range = f.Skip(i - maxMi).Take(i >= maxMi ? maskWidth : i + maxMi + 1)
+                        .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? maskWidth : j + maxMj + 1).ToArray())
+                        .ToArray();
+
+                    result[i][j] = fromRangeFunction.Invoke(range);
+
+                }
+
+            }
+            return result;
+
+        }
 
 
 
