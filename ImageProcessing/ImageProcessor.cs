@@ -30,6 +30,8 @@ namespace ImageProcessing
 
             }
 
+         
+
             public override bool Equals(object obj)
             {
                 var data = obj as PictureData;
@@ -59,6 +61,8 @@ namespace ImageProcessing
         static ImageType currImageType = ImageType.NONE;
         static int width;
         static int height;
+
+        static Boolean Colored = false;
 
         public ImageProcessor()
         {
@@ -130,10 +134,15 @@ namespace ImageProcessing
                 {
                    
                     int value = (int)source[i][j];
-                    Color c = Color.FromArgb(255,
-                     value,
-                     value,
-                     value);
+                    Color c;
+                    if (Colored && value < 0) {
+                        c = Color.FromArgb(255, 255, 0, 0);
+
+                    } else 
+                    {
+                        c = Color.FromArgb(255, value,value,value);
+                    }
+                             
                     bmp.SetPixel(i, j, c);
 
                 }
@@ -157,6 +166,7 @@ namespace ImageProcessing
                 case "jpg":
                     {
                         imgType = ImageType.JPEG;
+                        currImageType = ImageType.JPEG;
                         Bitmap bmp = new Bitmap(Image.FromFile(filename));
                         width = bmp.Width;
                         height = bmp.Height;
@@ -283,15 +293,26 @@ namespace ImageProcessing
         private static double[][] RescaleImage(double[][] source)
         {
             double[][] target = new double[source.Length][];
-            double max = Int16.MinValue;
-            double min = Int16.MaxValue;
-            for (int j = 0; j < width; j++)
+
+
+            double max = source[0][0];
+            double min = source[0][0];
+           /* if (currImageType == ImageType.JPEG) {
+                max = int.MaxValue;
+                min = int.MinValue;
+            }*/
+                for (int j = 0; j < width; j++)
             {
                 for (int i = 0; i < height; i++)
                 {
                     double value = source[j][i];
+                    if (Colored) {
+                        if (value < 0) {
+                            continue;
+                        }
 
-                    if (value < min)
+                    }
+                    if (value < min )
                     {
                         min = value;
                     }
@@ -301,13 +322,26 @@ namespace ImageProcessing
                     }
                 }
             }
+
+            if (max == min) {
+                min = 0;
+                max = max > 0 ? max : 1;
+            }
             for (int i = 0; i < width; i++)
             {
                 target[i] = new double[source[i].Length];
                 for (int j = 0; j < height; j++)
                 {
                     double value = source[i][j];
-                    value = (int)(((double)(value - min) / (double)(max - min)) * 255);
+                    if (Colored && value < 0)
+                    {
+
+                    }
+                    else
+                    {
+                        value = (int)(((double)(value - min) / (double)(max - min)) * 255);
+                    }
+                    
 
                     target[i][j] = value;
                 }
@@ -408,6 +442,7 @@ namespace ImageProcessing
             //data[pictureNum] = RescaleImage(data[pictureNum]);
 
             DisplayImage(RescaleImage(data[pictureNum]),pictureList[pictureNum]);
+            Colored = false;
         }
 
         double[][] cached;
@@ -497,7 +532,7 @@ namespace ImageProcessing
                 case "Negative":
                     {
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
-                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Nagative(y, 255));
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Negative(y, 255));
                         double tmp = 0;
 
                         addParameters(panelTransformParams, new string[] { });
@@ -510,6 +545,15 @@ namespace ImageProcessing
                         double tmp = 0;
 
                         addParameters(panelTransformParams, new string[] { "C", "gamma"});
+                        break;
+                    }
+                case "Reascale":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => RescaleImage(y));
+                        double tmp = 0;
+
+                        addParameters(panelTransformParams, new string[] { });
                         break;
                     }
                 case "Logarithmic":
@@ -614,6 +658,15 @@ namespace ImageProcessing
                         break;
 
                     }
+                case "ThresholdDynamic":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.ThresholdFunDynamic(y, (int) args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "Windows count" });
+                        break;
+
+                    }
                 case "LPF_Whole":
                     {
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
@@ -634,6 +687,7 @@ namespace ImageProcessing
                     }
                 case "Minus":
                     {
+                        
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
                         transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Minus(y, data[(int)args[0]]));
 
@@ -641,6 +695,24 @@ namespace ImageProcessing
                         break;
 
                     }
+                case "Plus":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Plus(y, data[(int)args[0]]));
+
+                        addParameters(panelTransformParams, new string[] { "pictureNum" });
+                        break;
+
+                    }
+                case "MultiColorPlus":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.MultiColorPlus(y, data[(int)args[0]]));
+
+                        addParameters(panelTransformParams, new string[] { "pictureNum" });
+                        break;
+
+                    }                   
                 case "Gradient":
                     {
                         transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
@@ -714,6 +786,51 @@ namespace ImageProcessing
 
                     }
 
+                case "Flood":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        //transformWhole = new Func<double[][], double[], double[][]>((y, args) => Transformations.Flood(y, (int)args[0]));
+
+                        addParameters(panelTransformParams, new string[] { "iterations" });
+                        break;
+
+                    }
+                case "FindAreas":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => {
+                            Colored = true;
+                            return  Transformations.MultiColorPlus(Transformations.FindAreas(y, (int)args[0]), y);
+                        });
+                        
+                        addParameters(panelTransformParams, new string[] {"stone size" });
+                        break;
+
+                    }
+                case "FindAreasWithPreproccessing":
+                    {
+                        transformY = new Func<Double[], Double[], Double[]>((y, args) => y);
+                        transformWhole = new Func<double[][], double[], double[][]>((y, args) => {
+
+                            var grad_stone = Transformations.Gradient(RescaleImage(Transformations.Negative(RescaleImage(y), 255)));
+                            var interstone = Transformations.Laplassian(RescaleImage(Transformations.Negative(RescaleImage(y), 255)));
+                              interstone = Transformations.Plus(interstone, interstone);
+                            interstone = Transformations.Plus(interstone, interstone);
+                             var a =  Transformations.Minus(Transformations.Plus(RescaleImage(y), grad_stone), interstone);
+                              var b = Transformations.Plus(Transformations.ThresholdFun(a, 115, 115), 
+                                                           Transformations.Laplassian(RescaleImage(y)));
+                            var c = Transformations.ThresholdFun(b, 115, 115);
+                            Colored = true;
+                            return Transformations.MultiColorPlus(Transformations.FindAreas(c, (int)args[0]), y);
+                        });
+                        
+                        addParameters(panelTransformParams, new string[] { "stone size" });
+                        break;
+
+                    }
+
+
+
 
 
 
@@ -765,7 +882,7 @@ namespace ImageProcessing
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-
+                
         }
 
         private void btAddArea_Click(object sender, EventArgs e)

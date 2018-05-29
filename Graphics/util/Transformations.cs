@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Graphics.util
 {
@@ -826,7 +827,7 @@ namespace Graphics.util
 
         }
 
-        public static double[][] Nagative(double[][] x, double Lmax)
+        public static double[][] Negative(double[][] x, double Lmax)
         {
             int width = x.Length;
             int height = x[0].Length;
@@ -1027,8 +1028,8 @@ namespace Graphics.util
             for (int i = 0; i < f.Length; i++)
             {
                 tmp = Derivative(f[i]);
-                double dT = 1.0 / f[i].Length;
-                tmp = Transformations.ConwolutionWithBsf(f[i], freq1, freq2, m, dT).Skip((int)m).Take(f[i].Length).ToArray();
+                //  double dT = 1.0 / f[i].Length;
+                tmp = Transformations.ConwolutionWithBsf(f[i], freq1, freq2, m, 1).Skip((int)m).Take(f[i].Length).ToArray();
                 result[i] = tmp;
 
 
@@ -1069,7 +1070,7 @@ namespace Graphics.util
         {
 
             //double[] mass = f.SelectMany(x => x).ToArray();
-            
+
 
 
             for (int i = 0; i < f.Length; i++)
@@ -1094,6 +1095,106 @@ namespace Graphics.util
 
         }
 
+        /// <summary>
+        /// Calculates threshold function in the sliding window with length  f.Length / count
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static double[][] ThresholdFunDynamic(double[][] f, int count, int depth = 8)
+        {
+            int strideX = f.Length / count;
+            int strideY = f[0].Length / count;
+            double[][] result = new double[f.Length][];
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    int maxMi = strideX / 2;
+                    int maxMj = strideY / 2;
+
+                    //New fast version. values appeared from the commented code bellow ( aguments of skip and take when calculating submatrixes
+                    int startiF = i - maxMi;
+                    int endiF = startiF + (i >= maxMi ? strideX : i + maxMi + 1);
+                    int startjF = j - maxMj;
+                    int endjF = startjF + (j >= maxMj ? strideY : j + maxMj + 1);
+
+                    int startiM = i < maxMi ? maxMi - i : 0;
+                    int endiM = startiM + i + maxMi >= f.Length ? f.Length - i + 1 : strideX;
+                    int startjM = j < maxMj ? maxMj - j : 0;
+                    int endjM = startjM + j + maxMj >= f[i].Length ? f[i].Length - j + 1 : strideY;
+                    startiF = EnsureValueIsPositive(startiF);
+                    startjF = EnsureValueIsPositive(startjF);
+                    startjM = EnsureValueIsPositive(startjM);
+                    startiM = EnsureValueIsPositive(startiM);
+                    //!!!!!!!!!!!!!!!!!!! Warning do not remove!!!!!!!!!!!!!!!!!!!!!!!
+                    //!!!! Previous versioin of code : for demonstation of variable values above!!!!!!
+                    /*  double[][] range = f.Skip(i - maxMi)
+                     *                      .Take(i >= maxMi ? mask.Length : i + maxMi + 1)
+                     *                      .Select(x => x.Skip(j - maxMj)
+                     *                                    .Take(j >= maxMj ? mask[0].Length : j + maxMj + 1)
+                     *                                    .ToArray())
+                     *                                    .ToArray();
+                     *                                    
+                     *  double[][] maskRange = mask.Skip(i < maxMi ? maxMi - i : 0)                     
+                     *                             .Take(i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length)
+                     *                             .Select(x => x.Skip(j < maxMj ? maxMj - j : 0)
+                     *                                           .Take(j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length)
+                     *                                           .ToArray())
+                     *                             .ToArray();*
+                     *  for (int mi = 0; mi < maskRange.Length; mi++)
+                     *  {
+                     *      for (int mj = 0; mj < maskRange[mi].Length; mj++)
+                     *      {
+                     *          sum += range[mi][mj] * maskRange[mi][mj];
+                     *      }
+                     *  }
+                     */
+                    //!!!!!!!!!!!!!!!!!!! end of demo code!!!!!!!!!!!!!!!!!!!!!!!
+
+                    double dynamicMax = f[i][j];
+                    double dynamicMin = f[i][j];
+                    int ind1 = 0;
+                    int ind2 = 0;
+
+
+                    for (int mi = startiM; mi < endiM; mi++)
+                    {
+                        for (int mj = startjM; mj < endjM; mj++)
+                        {
+                            if (f[startiF + ind1][startjF + ind2] < dynamicMin)
+                            {
+                                dynamicMin = f[startiF + ind1][startjF + ind2];
+                            }
+
+                            if (f[startiF + ind1][startjF + ind2] > dynamicMax)
+                            {
+                                dynamicMax = f[startiF + ind1][startjF + ind2];
+                            }
+
+                            ind2++;
+                        }
+                        ind2 = 0;
+                        ind1++;
+                    }
+
+                    if (f[i][j] > (dynamicMax - dynamicMin) / 2)
+                    {
+
+                        result[i][j] = dynamicMax; ;
+                    }
+                    else
+                    {
+                        result[i][j] = dynamicMin;
+
+                    }
+
+                }
+            }
+            return result;
+        }
+
+
         public static double[][] Minus(double[][] arr1, double[][] arr2)
         {
             double[][] result = new double[arr1.Length][];
@@ -1107,6 +1208,68 @@ namespace Graphics.util
                     if (x < 0)
                     {
                         x = 0;
+
+                    }
+                    result[i][j] = x;
+                }
+
+
+            }
+
+
+            return result;
+
+        }
+
+
+        public static double[][] Plus(double[][] arr1, double[][] arr2)
+        {
+            double[][] result = new double[arr1.Length][];
+
+            for (int i = 0; i < arr1.Length; i++)
+            {
+                result[i] = new double[arr1[i].Length];
+                for (int j = 0; j < arr1[i].Length; j++)
+                {
+                    int x = (int)arr1[i][j] + (int)arr2[i][j];
+                    if (x > 255)
+                    {
+                        x = 255;
+
+                    }
+                    result[i][j] = x;
+                }
+
+
+            }
+
+
+            return result;
+
+        }
+
+
+        public static double[][] MultiColorPlus(double[][] arr1, double[][] arr2)
+        {
+            double[][] result = new double[arr1.Length][];
+
+            for (int i = 0; i < arr1.Length; i++)
+            {
+                result[i] = new double[arr1[i].Length];
+                for (int j = 0; j < arr1[i].Length; j++)
+                {
+                    int x = (int)arr1[i][j] + (int)arr2[i][j];
+                    if (arr1[i][j] < 0) {
+                        x = (int)arr1[i][j];
+                    }
+                    if (arr2[i][j] < 0)
+                    {
+                        x = (int)arr2[i][j];
+                    }
+
+                    if (x > 255)
+                    {
+                        x = 255;
 
                     }
                     result[i][j] = x;
@@ -1186,7 +1349,7 @@ namespace Graphics.util
 
             for (int i = 0; i < f.Length; i++)
             {
-                tmp = f[i].Max();
+                tmp = f[i].Min();
                 if (tmp < max)
                 {
                     max = tmp;
@@ -1279,8 +1442,10 @@ namespace Graphics.util
 
             return f;
         }
-        public static int EnsureValueIsPositive(int val) {
-            if (val < 0) {
+        public static int EnsureValueIsPositive(int val)
+        {
+            if (val < 0)
+            {
                 return 0;
             }
             return val;
@@ -1297,7 +1462,7 @@ namespace Graphics.util
             double[][] result = new double[f.Length][];
             for (int i = 0; i < f.Length; i++)
             {
-                result[i] = new double[f[i].Length];              
+                result[i] = new double[f[i].Length];
                 for (int j = 0; j < f[i].Length; j++)
                 {
                     int maxMi = (int)mask.Length / 2;
@@ -1315,7 +1480,7 @@ namespace Graphics.util
                     int endjM = startjM + j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length;
                     startiF = EnsureValueIsPositive(startiF);
                     startjF = EnsureValueIsPositive(startjF);
-                    startjM = EnsureValueIsPositive(startjM);             
+                    startjM = EnsureValueIsPositive(startjM);
                     startiM = EnsureValueIsPositive(startiM);
                     //!!!!!!!!!!!!!!!!!!! Warning do not remove!!!!!!!!!!!!!!!!!!!!!!!
                     //!!!! Previous versioin of code : for demonstation of variable values above!!!!!!
@@ -1340,17 +1505,18 @@ namespace Graphics.util
                      *      }
                      *  }
                      */
-                     //!!!!!!!!!!!!!!!!!!! end of demo code!!!!!!!!!!!!!!!!!!!!!!!
+                    //!!!!!!!!!!!!!!!!!!! end of demo code!!!!!!!!!!!!!!!!!!!!!!!
 
                     double sum = 0;
 
-                    int ind1=0;
-                    int ind2=0;
+                    int ind1 = 0;
+                    int ind2 = 0;
 
                     for (int mi = startiM; mi < endiM; mi++)
                     {
-                        for (int mj = startjM; mj < endjM; mj++) {
-                            sum += f[startiF+ind1][startjF + ind2] * mask[mi][mj];
+                        for (int mj = startjM; mj < endjM; mj++)
+                        {
+                            sum += f[startiF + ind1][startjF + ind2] * mask[mi][mj];
                             ind2++;
                         }
                         ind2 = 0;
@@ -1365,7 +1531,7 @@ namespace Graphics.util
 
 
 
-        public static double[][] AvgFilter(double[][] f,int  maskWidth)
+        public static double[][] AvgFilter(double[][] f, int maskWidth)
         {
 
             double[][] result = new double[f.Length][];
@@ -1381,7 +1547,7 @@ namespace Graphics.util
                         .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? maskWidth : j + maxMj + 1).ToArray())
                         .ToArray();
 
-                   double avg = range.SelectMany(x => x).Average();
+                    double avg = range.SelectMany(x => x).Average();
 
                     result[i][j] = avg;
 
@@ -1407,8 +1573,8 @@ namespace Graphics.util
                         .Select(x => x.Skip(j - maxMj).Take(j >= maxMj ? maskWidth : j + maxMj + 1).ToArray())
                         .ToArray();
 
-                    double[] values = range.SelectMany(x => x).OrderBy(x=>x).ToArray();
-                    result[i][j] = values[values.Length/2];
+                    double[] values = range.SelectMany(x => x).OrderBy(x => x).ToArray();
+                    result[i][j] = values[values.Length / 2];
 
                 }
 
@@ -1481,7 +1647,7 @@ namespace Graphics.util
 
 
 
-        public static double[][] ApplyMaskErosion(double[][] f,int maskWidth, double threshold)
+        public static double[][] ApplyMaskErosion(double[][] f, int maskWidth, double threshold)
         {
             double[][] result = new double[f.Length][];
             int maxMi = (int)maskWidth / 2;
@@ -1492,15 +1658,15 @@ namespace Graphics.util
                 //++
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                        double value = f[i][j];
-                    if (i >= maxMi && i < f.Length - maxMi && j>= maxMj && j< f[i].Length-maxMj)
+                    double value = f[i][j];
+                    if (i >= maxMi && i < f.Length - maxMi && j >= maxMj && j < f[i].Length - maxMj)
                     {
                         double[][] range = f.Skip(i - maxMi).Take(maskWidth)
                             .Select(x => x.Skip(j - maxMj).Take(maskWidth).ToArray())
                             .ToArray();
                         bool needToDelete = false;
 
-                        
+
                         for (int mi = 0; mi < range.Length; mi++)
                         {
                             for (int mj = 0; mj < range[mi].Length; mj++)
@@ -1508,7 +1674,7 @@ namespace Graphics.util
                                 if (range[mi][mj] < threshold)
                                 {
                                     needToDelete = true;
-                                    
+
                                 }
                             }
                         }
@@ -1580,15 +1746,16 @@ namespace Graphics.util
 
 
 
-        public static double[][] ApplyRandNoize(double[][] f, double power) {
+        public static double[][] ApplyRandNoize(double[][] f, double power)
+        {
             Random rnd = new Random(f.Length);
             double[][] result = new double[f.Length][];
             double rndValue;
 
-            int min =(int) Minimum(f);
-    
-   
-            int max = (int) Maximum(f);
+            int min = (int)Minimum(f);
+
+
+            int max = (int)Maximum(f);
 
             if (max - min < 128)
             {
@@ -1601,15 +1768,17 @@ namespace Graphics.util
                 result[i] = new double[f[i].Length];
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                     rndValue = rnd.NextDouble();
+                    rndValue = rnd.NextDouble();
 
 
                     if (rndValue < power)
                     {
+                        int rndVal = rnd.Next(-30, 31);
                         //TODO: Min and MAX?
-                        result[i][j] = rnd.Next(0, 255);
+                        result[i][j] = f[i][j] + rndVal > 255 ? 255 : ((f[i][j] < 0) ? 0 : rndVal + f[i][j]);
                     }
-                    else {
+                    else
+                    {
                         result[i][j] = f[i][j];
                     }
 
@@ -1630,14 +1799,14 @@ namespace Graphics.util
                 result[i] = new double[f[i].Length];
                 for (int j = 0; j < f[i].Length; j++)
                 {
-                    
+
                     rndValue = rnd.NextDouble();
 
 
                     if (rndValue < power)
                     {
                         //TODO: Min and MAX?   
-                        result[i][j] = Math.Round(rnd.NextDouble())* 255;
+                        result[i][j] = Math.Round(rnd.NextDouble()) * 255;
                     }
                     else
                     {
@@ -1650,7 +1819,7 @@ namespace Graphics.util
             return result;
 
         }
-        
+
         public static double[][] ApplyMaskedFunction(double[][] f, int maskWidth, Func<double[][], double> fromRangeFunction)
         {
             double[][] result = new double[f.Length][];
@@ -1673,6 +1842,351 @@ namespace Graphics.util
             }
             return result;
 
+        }
+
+
+        public static double MinimumExcept777(double[][] f)
+        {
+            double max = int.MaxValue;
+            double tmp;
+
+            for (int i = 0; i < f.Length; i++)
+            {
+                tmp = f[i].Where(x => x != -777).Min();
+                if (tmp != -777 && tmp < max)
+                {
+                    max = tmp;
+                }
+
+
+            }
+            return max;
+
+
+        }
+
+        public static Boolean hasNeighbourInThisList(Tuple<double, double> point, List<Tuple<double, double>> list)
+        {
+            foreach (Tuple<double, double> item in list)
+            {
+                if (Math.Abs(point.Item1 - item.Item1) <= 1 && Math.Abs(point.Item2 - item.Item2) <= 1)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+
+        public static Boolean areNeighbours(List<Tuple<double, double>> list1, List<Tuple<double, double>> list2)
+        {
+            foreach (Tuple<double, double> itemList1 in list1)
+            {
+                if (hasNeighbourInThisList(itemList1, list2))
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+        public static int getIndex(SortedSet<int>[] sets, int value)
+        {
+            for (int i = 0; i < sets.Length; i++)
+            {
+                if (sets[i] != null)
+                    if (sets[i].Contains(value))
+                    {
+                        return i;
+                    }
+
+            }
+
+            return -1;
+
+        }
+
+
+
+
+        const int TRESHOLD = 114;
+        /// <summary>
+        /// Looks for objects wich are componnets of connectivity and has diameter  stoneSize
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static double[][] FindAreas(double[][] f, int stoneSize)
+        {
+            
+
+            int counter = 0;
+            int strideX = stoneSize;
+            int strideY = stoneSize;
+            double[][] result = new double[f.Length][];
+
+            for (int i = 0; i < f.Length; i++)
+            {
+                result[i] = new double[f[i].Length];
+            }
+
+            for (int i = 0; i < f.Length; i++)
+            {
+              
+
+                for (int j = 0; j < f[i].Length; j++)
+                {
+                    
+                    int maxMi = strideX / 2;
+                    int maxMj = strideY / 2;
+
+                    //New fast version. values appeared from the commented code bellow ( aguments of skip and take when calculating submatrixes
+                    int startiF = i - maxMi;
+                    int endiF = startiF + (i >= maxMi ? strideX : i + maxMi + 1);
+                    int startjF = j - maxMj;
+                    int endjF = startjF + (j >= maxMj ? strideY : j + maxMj + 1);
+
+                    int startiM = i < maxMi ? maxMi - i : 0;
+                    int endiM = startiM + i + maxMi >= f.Length ? f.Length - i + 1 : strideX;
+                    int startjM = j < maxMj ? maxMj - j : 0;
+                    int endjM = startjM + j + maxMj >= f[i].Length ? f[i].Length - j + 1 : strideY;
+                    startiF = EnsureValueIsPositive(startiF);
+                    startjF = EnsureValueIsPositive(startjF);
+                    startjM = EnsureValueIsPositive(startjM);
+                    startiM = EnsureValueIsPositive(startiM);
+                    //!!!!!!!!!!!!!!!!!!! Warning do not remove!!!!!!!!!!!!!!!!!!!!!!!
+                    //!!!! Previous versioin of code : for demonstation of variable values above!!!!!!
+                    /*  double[][] range = f.Skip(i - maxMi)
+                     *                      .Take(i >= maxMi ? mask.Length : i + maxMi + 1)
+                     *                      .Select(x => x.Skip(j - maxMj)
+                     *                                    .Take(j >= maxMj ? mask[0].Length : j + maxMj + 1)
+                     *                                    .ToArray())
+                     *                                    .ToArray();
+                     *                                    
+                     *  double[][] maskRange = mask.Skip(i < maxMi ? maxMi - i : 0)                     
+                     *                             .Take(i + maxMi >= f.Length ? f.Length - i + 1 : mask.Length)
+                     *                             .Select(x => x.Skip(j < maxMj ? maxMj - j : 0)
+                     *                                           .Take(j + maxMj >= f[i].Length ? f[i].Length - j + 1 : mask[0].Length)
+                     *                                           .ToArray())
+                     *                             .ToArray();*
+                     *  for (int mi = 0; mi < maskRange.Length; mi++)
+                     *  {
+                     *      for (int mj = 0; mj < maskRange[mi].Length; mj++)
+                     *      {
+                     *          sum += range[mi][mj] * maskRange[mi][mj];
+                     *      }
+                     *  }
+                     */
+                    //!!!!!!!!!!!!!!!!!!! end of demo code!!!!!!!!!!!!!!!!!!!!!!!
+
+
+                    int ind1 = 0;
+                    int ind2 = 0;
+
+
+                    Boolean needToProcess = true;
+
+
+                    if (endjF >= f[0].Length)
+                    {
+                        needToProcess = false;
+                        break;
+                    }
+
+                    if (endiF >= f.Length)
+                    {
+                        needToProcess = false;
+                        break;
+                    }
+
+                    if (needToProcess)
+                    {
+
+                        for (int mi = startiM; mi < endiM; mi++)
+                        {
+                            for (int mj = startjM; mj < endjM; mj++)
+                            {
+                                int outIndI = startiF + ind1;
+                                int outIndJ = startjF + ind2;
+
+
+                                if (f[outIndI][outIndJ] > TRESHOLD)
+                                {
+
+
+                                    var component = findComponent(f,new HashSet<Tuple<int, int>>(), outIndI, outIndJ, startiF, startjF, startiF + stoneSize, startjF + stoneSize);
+                                    if (component.Count > 0) {
+                                        if ( EnsureSeparated(f, component))
+                                        {
+                                            if (EnsureDistanceIsTarget(component, stoneSize) == stoneSize)
+                                            {
+                                                counter++;
+
+                                                foreach (var item in component)
+                                                {
+                                                    result[item.Item1][item.Item2] = -f[item.Item1][item.Item2];
+                                                    f[item.Item1][item.Item2] = 0;
+                                                    
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                ind2++;
+                            }
+                            ind2 = 0;
+                            ind1++;
+                        }
+
+
+                    }
+
+
+                }
+            }
+            MessageBox.Show("There are " + counter + " stones! ");
+            return result;
+        }
+
+   
+        public static HashSet<Tuple<int, int>> findComponent(double[][] f, HashSet<Tuple<int, int>> tuples,  int x, int y, int startI, int startJ, int stopI, int stopJ)
+        {
+
+            if (f[x][y] > TRESHOLD)
+            {
+                var targetTuple1 = new Tuple<int, int>(x, y);
+                if (!tuples.Contains(targetTuple1))
+                {
+                    tuples.Add(targetTuple1);
+
+                    if (x > startI && x> 0)
+                    {
+                       findComponent(f,tuples, x - 1, y, startI, startJ, stopI, stopJ);
+                    }
+                    if (x < stopI - 1 && y < f.Length-1)
+                    {
+                        findComponent(f,tuples, x + 1, y, startI, startJ, stopI, stopJ);
+                    }
+                    if (y > startJ && y>0)
+                    {
+                        findComponent(f,tuples, x, y - 1, startI, startJ, stopI, stopJ);
+                    }
+                    if (x < stopJ - 1 && y< f[0].Length-1)
+                    {
+                        findComponent(f,tuples, x, y + 1, startI, startJ, stopI, stopJ);
+                    }
+                }
+            }
+            return tuples;
+
+        }
+
+        public static Boolean EnsureSeparated(double[][] f, HashSet<Tuple<int, int>> tuples) {
+            Boolean isSeparated = true;
+
+
+            foreach (var point in tuples)
+            {
+                int curX = point.Item1;
+                int curY = point.Item2;
+
+                int targetX = curX;
+                int targetY = curY;
+
+                if (curX > 0)
+                {
+                    targetX = curX - 1;
+                    Tuple<int, int> left = new Tuple<int, int>(targetX, targetY);
+                    if (!tuples.Contains(left))
+                    {
+                        if (f[targetX][targetY] > TRESHOLD)
+                        {
+                             return false;
+                        }
+                    }
+                }
+
+                if (curX < f.Length - 1)
+                {
+                    targetX = curX + 1;
+                    Tuple<int, int> right = new Tuple<int, int>(targetX, targetY);
+                    if (!tuples.Contains(right))
+                    {
+                        if (f[targetX][targetY] > TRESHOLD)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                targetX = curX;
+
+                if (curY > 0)
+                {
+                    targetY = curY - 1;
+                    Tuple<int, int> upper = new Tuple<int, int>(targetX, targetY);
+                    if (!tuples.Contains(upper))
+                    {
+                        if (f[targetX][targetY] > TRESHOLD)
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if (curY < f[0].Length - 1)
+                {
+                    targetY = curY + 1;
+                    Tuple<int, int> bottom = new Tuple<int, int>(targetX, targetY);
+                    if (!tuples.Contains(bottom))
+                    {
+                        if (f[targetX][targetY] > TRESHOLD)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return isSeparated;
+
+
+
+        }
+
+        public static int EnsureDistanceIsTarget(HashSet<Tuple<int, int>> component, int distance)
+        {
+            int tmp;
+            int maxDist= 0;
+            int boundUp = (distance + 1) * (distance + 1);
+            int boundDown = (distance - 1) * (distance - 1);
+
+            foreach (var item1 in component)
+            {
+                foreach (var item2 in component)
+                {
+                    tmp = (item1.Item1 - item2.Item1) * (item1.Item1 - item2.Item1) + (item1.Item2 - item2.Item2) * (item1.Item2 - item2.Item2);
+                    if (tmp > maxDist) {
+                        maxDist = tmp;
+                    }
+
+                    if ( maxDist > boundUp)
+                    {
+                        return 0;
+                    }
+
+
+                    }
+
+            }
+
+            //Console.WriteLine("distance was " + tmp);
+            if (maxDist > boundDown && maxDist < boundUp)
+            {
+                return distance;
+            }
+            return 0;
         }
 
 
