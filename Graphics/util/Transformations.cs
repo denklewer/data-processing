@@ -2015,7 +2015,7 @@ namespace Graphics.util
 
 
                                     var component = findComponent(f,new HashSet<Tuple<int, int>>(), outIndI, outIndJ, startiF, startjF, startiF + stoneSize, startjF + stoneSize);
-                                    if (component.Count > 0) {
+                                    if (component.Count > stoneSize) {
                                         if ( EnsureSeparated(f, component))
                                         {
                                             if (EnsureDistanceIsTarget(component, stoneSize) == stoneSize)
@@ -2050,9 +2050,11 @@ namespace Graphics.util
         }
 
    
-        public static HashSet<Tuple<int, int>> findComponent(double[][] f, HashSet<Tuple<int, int>> tuples,  int x, int y, int startI, int startJ, int stopI, int stopJ)
+        public static HashSet<Tuple<int, int>> findComponent(double[][] f, 
+                                                             HashSet<Tuple<int, int>> tuples,  
+                                                             int x, int y, int startI, 
+                                                             int startJ, int stopI, int stopJ)
         {
-
             if (f[x][y] > TRESHOLD)
             {
                 var targetTuple1 = new Tuple<int, int>(x, y);
@@ -2079,13 +2081,10 @@ namespace Graphics.util
                 }
             }
             return tuples;
-
         }
 
         public static Boolean EnsureSeparated(double[][] f, HashSet<Tuple<int, int>> tuples) {
             Boolean isSeparated = true;
-
-
             foreach (var point in tuples)
             {
                 int curX = point.Item1;
@@ -2106,7 +2105,6 @@ namespace Graphics.util
                         }
                     }
                 }
-
                 if (curX < f.Length - 1)
                 {
                     targetX = curX + 1;
@@ -2119,9 +2117,7 @@ namespace Graphics.util
                         }
                     }
                 }
-
                 targetX = curX;
-
                 if (curY > 0)
                 {
                     targetY = curY - 1;
@@ -2134,7 +2130,6 @@ namespace Graphics.util
                         }
                     }
                 }
-
                 if (curY < f[0].Length - 1)
                 {
                     targetY = curY + 1;
@@ -2148,11 +2143,7 @@ namespace Graphics.util
                     }
                 }
             }
-
             return isSeparated;
-
-
-
         }
 
         public static int EnsureDistanceIsTarget(HashSet<Tuple<int, int>> component, int distance)
